@@ -3,5 +3,6 @@
 
 void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
 {
-    strncpy(dst, "II", 2);
+    strncpy(dst, first, flen);
+    strncpy(dst+flen, second, slen);
 }
