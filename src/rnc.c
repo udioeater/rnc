@@ -3,8 +3,10 @@
 
 void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
 {
-    strncpy(dst, first, flen);
-    strncpy(dst+flen, second, slen);
+    *dst = 0;
+    strncat(dst, first, flen);
+    strncat(dst, second, slen);
+
     if (0 == strncmp(dst, "IIII", 4)) {
         strncpy(dst, "IV", maxlen);
     }
