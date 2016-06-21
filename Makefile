@@ -9,5 +9,6 @@ tests: test_rnc rnc
 	gcc -o tests test_rnc.o -lcheck -pthread -lcheck_pic -lrt -lm -L. -lrnc
 
 clean:
-	rm *.o
-	rm tests
+	rm -f *.o
+	rm -f *.a
+	rm -f tests
