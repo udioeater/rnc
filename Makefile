@@ -1,3 +1,6 @@
+run-tests: tests
+	./tests
+
 rnc: src/rnc.c src/rnc.h
 	gcc -c src/rnc.c -o rnc.o
 	ar rcs librnc.a rnc.o
