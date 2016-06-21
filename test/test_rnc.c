@@ -1,9 +1,15 @@
 #include <stdlib.h>
 #include <check.h>
+#include "../src/rnc.h"
 
-START_TEST (test)
+START_TEST (add_I_plus_I_returns_II)
 {
-    ck_assert_int_eq(1, 2);
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("I", 1, "I", 1, answer, maxlen);
+
+    ck_assert_str_eq("II", answer);
 }
 END_TEST
 
@@ -13,9 +19,9 @@ Suite* rnc_suite(voi)
     TCase *tc_core;
 
     s = suite_create("RNC");
-    tc_core = tcase_create("test");
+    tc_core = tcase_create("add");
 
-    tcase_add_test(tc_core, test);
+    tcase_add_test(tc_core, add_I_plus_I_returns_II);
     suite_add_tcase(s, tc_core);
 
     return s;
