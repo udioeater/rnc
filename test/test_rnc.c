@@ -134,27 +134,37 @@ START_TEST (add_XXX_plus_XX_returns_L)
 }
 END_TEST
 
-Suite* rnc_suite(voi)
+Suite* rnc_suite(void)
 {
     Suite *s;
-    TCase *tc_core;
+    TCase *basic;
+    TCase *ordering;
+    TCase *combining;
+    TCase *shorthand;
 
-    s = suite_create("RNC");
-    tc_core = tcase_create("add");
+    s = suite_create("RNC-add");
+    basic = tcase_create("basic");
+    ordering = tcase_create("ordering");
+    combining = tcase_create("combining");
+    shorthand = tcase_create("shorthand");
 
-    tcase_add_test(tc_core, add_I_plus_I_returns_II);
-    tcase_add_test(tc_core, add_II_plus_I_returns_III);
-    tcase_add_test(tc_core, add_II_plus_II_returns_IV);
-    tcase_add_test(tc_core, add_XIII_plus_I_returns_XIV);
-    tcase_add_test(tc_core, add_I_plus_V_returns_VI);
-    tcase_add_test(tc_core, add_XI_plus_V_returns_XVI);
-    tcase_add_test(tc_core, add_V_plus_XI_returns_XVI);
-    tcase_add_test(tc_core, add_VIII_plus_I_returns_IX);
-    tcase_add_test(tc_core, add_V_plus_V_returns_X);
-    tcase_add_test(tc_core, add_III_plus_II_returns_V);
-    tcase_add_test(tc_core, add_VI_plus_V_returns_XI);
-    tcase_add_test(tc_core, add_XXX_plus_XX_returns_L);
-    suite_add_tcase(s, tc_core);
+    tcase_add_test(basic, add_I_plus_I_returns_II);
+    tcase_add_test(basic, add_II_plus_I_returns_III);
+    tcase_add_test(shorthand, add_II_plus_II_returns_IV);
+    tcase_add_test(shorthand, add_XIII_plus_I_returns_XIV);
+    tcase_add_test(ordering, add_I_plus_V_returns_VI);
+    tcase_add_test(ordering, add_XI_plus_V_returns_XVI);
+    tcase_add_test(ordering, add_V_plus_XI_returns_XVI);
+    tcase_add_test(shorthand, add_VIII_plus_I_returns_IX);
+    tcase_add_test(combining, add_V_plus_V_returns_X);
+    tcase_add_test(combining, add_III_plus_II_returns_V);
+    tcase_add_test(combining, add_VI_plus_V_returns_XI);
+    tcase_add_test(combining, add_XXX_plus_XX_returns_L);
+
+    suite_add_tcase(s, basic);
+    suite_add_tcase(s, ordering);
+    suite_add_tcase(s, combining);
+    suite_add_tcase(s, shorthand);
 
     return s;
 }
