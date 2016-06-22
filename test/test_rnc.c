@@ -112,6 +112,17 @@ START_TEST (add_III_plus_II_returns_V)
 }
 END_TEST
 
+START_TEST (add_VI_plus_V_returns_XI)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("VI", 2, "V", 1, answer, maxlen);
+
+    ck_assert_str_eq("XI", answer);
+}
+END_TEST
+
 Suite* rnc_suite(voi)
 {
     Suite *s;
@@ -130,6 +141,7 @@ Suite* rnc_suite(voi)
     tcase_add_test(tc_core, add_VIII_plus_I_returns_IX);
     tcase_add_test(tc_core, add_V_plus_V_returns_X);
     tcase_add_test(tc_core, add_III_plus_II_returns_V);
+    tcase_add_test(tc_core, add_VI_plus_V_returns_XI);
     suite_add_tcase(s, tc_core);
 
     return s;
