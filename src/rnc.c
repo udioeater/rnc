@@ -36,7 +36,11 @@ static int shrink(char *dst, int dstlen)
     int i = 0;
 
     for (i = 0; i < dstlen; i++) {
-        if (0 == strncmp(dst+i, "VV", 2)) {
+        if (0 == strncmp(dst+i, "XXXXX", 5)) {
+            strncat(tmp, "L", 1);
+            tmplen++;
+            i+=4;
+        } else if (0 == strncmp(dst+i, "VV", 2)) {
             strncat(tmp, "X", 1);
             tmplen++;
             i++;
