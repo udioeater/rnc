@@ -3,7 +3,8 @@
 
 static const char ORDER[7] = "MDCLXVI";
 
-static int combine(const char *first, int flen, const char *second, int slen, char *dst, int maxlen) {
+static int combine(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+{
     *dst = 0;
     int dstlen = 0;
     int i = 0;
@@ -27,13 +28,12 @@ static int combine(const char *first, int flen, const char *second, int slen, ch
     return dstlen;
 }
 
-void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+static int shrink(char *dst, int dstlen)
 {
-    char tmp[maxlen];
+    char tmp[dstlen];
+    tmp[0] = 0;
     int tmplen = 0;
     int i = 0;
-
-    int dstlen = combine(first, flen, second, slen, dst, maxlen);
 
     for (i = 0; i < dstlen; i++) {
         if (0 == strncmp(dst+i, "VV", 2)) {
@@ -49,7 +49,15 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
             tmplen++;
         }
     }
-    strncpy(dst, tmp, maxlen);
+    strncpy(dst, tmp, dstlen);
+
+    return tmplen;
+}
+
+void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+{
+    int dstlen = combine(first, flen, second, slen, dst, maxlen);
+    dstlen = shrink(dst, dstlen);
 
     if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
         strncpy(dst+dstlen-5, "IX", 5);
