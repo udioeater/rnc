@@ -26,12 +26,12 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
         dstlen++;
     }
 
-    if (0 == strncmp(dst, "VV", 2)) {
-        strncpy(dst, "X", 2);
-        dstlen--;
-    } else if (0 == strncmp(dst, "IIIII", 5)) {
+    if (0 == strncmp(dst, "IIIII", 5)) {
         strncpy(dst, "V", 5);
         dstlen -= 4;
+    } else if (0 == strncmp(dst, "VV", 2)) {
+        strncpy(dst, "X", 2);
+        dstlen--;
     }
 
     if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
