@@ -156,6 +156,17 @@ START_TEST (add_CCCV_plus_CCV_returns_DX)
 }
 END_TEST
 
+START_TEST (add_DX_plus_DI_returns_MXI)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("DX", 2, "DI", 2, answer, maxlen);
+
+    ck_assert_str_eq("MXI", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -184,6 +195,7 @@ Suite* rnc_suite(void)
     tcase_add_test(combining, add_XXX_plus_XX_returns_L);
     tcase_add_test(combining, add_L_plus_LVI_returns_CVI);
     tcase_add_test(combining, add_CCCV_plus_CCV_returns_DX);
+    tcase_add_test(combining, add_DX_plus_DI_returns_MXI);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
