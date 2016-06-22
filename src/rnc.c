@@ -7,6 +7,8 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
 {
     *dst = 0;
     int dstlen = 0;
+    char tmp[maxlen];
+    int tmplen = 0;
     int i = 0;
     int j = 0;
 
@@ -26,13 +28,21 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
         dstlen++;
     }
 
-    if (0 == strncmp(dst, "IIIII", 5)) {
-        strncpy(dst, "V", 5);
-        dstlen -= 4;
-    } else if (0 == strncmp(dst, "VV", 2)) {
-        strncpy(dst, "X", 2);
-        dstlen--;
+    for (i = 0; i < dstlen; i++) {
+        if (0 == strncmp(dst+i, "VV", 2)) {
+            strncat(tmp, "X", 1);
+            tmplen++;
+            i++;
+        } else if (0 == strncmp(dst+i, "IIIII", 5)) {
+            strncat(tmp, "V", 1);
+            tmplen++;
+            i+=4;
+        } else {
+            strncat(tmp, dst+i, 1);
+            tmplen++;
+        }
     }
+    strncpy(dst, tmp, maxlen);
 
     if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
         strncpy(dst+dstlen-5, "IX", 5);
