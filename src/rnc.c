@@ -3,17 +3,13 @@
 
 static const char ORDER[7] = "MDCLXVI";
 
-void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
-{
+static int combine(const char *first, int flen, const char *second, int slen, char *dst, int maxlen) {
     *dst = 0;
     int dstlen = 0;
-    char tmp[maxlen];
-    int tmplen = 0;
     int i = 0;
     int j = 0;
 
     while (dstlen <= (flen + slen - 1)) {
-
         char *fidx = index(ORDER, *(first+i));
         char *sidx = index(ORDER, *(second+j));
 
@@ -27,6 +23,17 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
 
         dstlen++;
     }
+
+    return dstlen;
+}
+
+void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+{
+    char tmp[maxlen];
+    int tmplen = 0;
+    int i = 0;
+
+    int dstlen = combine(first, flen, second, slen, dst, maxlen);
 
     for (i = 0; i < dstlen; i++) {
         if (0 == strncmp(dst+i, "VV", 2)) {
