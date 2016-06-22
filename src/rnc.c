@@ -7,24 +7,27 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
 {
     *dst = 0;
     int dstlen = 0;
+    int i = 0;
+    int j = 0;
 
-    if (index(ORDER, *first) < index(ORDER, *second)) {
-        strncat(dst, first, flen);
-        dstlen += flen;
+    while (dstlen <= (flen + slen - 1)) {
 
-        strncat(dst, second, slen);
-        dstlen += slen;
-    } else {
-        strncat(dst, second, slen);
-        dstlen += slen;
+        char *fidx = index(ORDER, *(first+i));
+        char *sidx = index(ORDER, *(second+j));
 
-        strncat(dst, first, flen);
-        dstlen += flen;
+        if (NULL == sidx || (fidx < sidx)) {
+            strncat(dst, first+i, 1);
+            i++;
+        } else {
+            strncat(dst, second+j, 1);
+            j++;
+        }
+
+        dstlen++;
     }
 
     if (0 == strncmp(dst+dstlen-4, "IIII", 4)) {
-        char *idx = index(dst, 'I');
-        strncpy(dst+(idx - dst), "IV", 4);
+        strncpy(dst+dstlen-4, "IV", 4);
         dstlen -= 2;
     }
 }
