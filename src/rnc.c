@@ -5,6 +5,7 @@ static const char ORDER[7] = "MDCLXVI";
 
 static void combine(const char *first, const char *second, char *dst, int maxlen)
 {
+    *dst = 0;
     int flen = strlen(first);
     int slen = strlen(second);
     int i = 0;
@@ -136,7 +137,10 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     char stmp[slen*3];
     expand(second, stmp);
 
-    combine(ftmp, stmp, dst, maxlen);
-    shrink(dst);
-    compress(dst);
+    char tmp[strlen(ftmp) + strlen(stmp)];
+    combine(ftmp, stmp, tmp, maxlen);
+    shrink(tmp);
+    compress(tmp);
+
+    strncpy(dst, tmp, strlen(tmp));
 }
