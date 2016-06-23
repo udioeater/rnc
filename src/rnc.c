@@ -74,15 +74,21 @@ static int expand(const char *num, int len, char *dst, int maxlen)
 {
     *dst = 0;
     int dstlen = 0;
-    if (0 == strncmp(num, "IX", 2)) {
-        strncat(dst, "VIIII", 5);
-        dstlen = 5;
-    } else if (0 == strncmp(num, "IV", 2)) {
-        strncat(dst, "IIII", 4);
-        dstlen = 4;
-    } else {
-        strncat(dst, num, len);
-        dstlen = len;
+    int i;
+
+    for (i = 0; i < len; i++) {
+        if (0 == strncmp(num+i, "IX", 2)) {
+            strncat(dst, "VIIII", 5);
+            dstlen += 5;
+            i++;
+        } else if (0 == strncmp(num+i, "IV", 2)) {
+            strncat(dst, "IIII", 4);
+            dstlen += 4;
+            i++;
+        } else {
+            strncat(dst, num+i, 1);
+            dstlen++;
+        }
     }
     return dstlen;
 }
