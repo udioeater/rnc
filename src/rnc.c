@@ -3,10 +3,12 @@
 
 static const char ORDER[7] = "MDCLXVI";
 
-static int combine(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+static int combine(const char *first, const char *second, char *dst, int maxlen)
 {
     *dst = 0;
     int dstlen = 0;
+    int flen = strlen(first);
+    int slen = strlen(second);
     int i = 0;
     int j = 0;
 
@@ -53,7 +55,7 @@ static int shrink_rule(char *dst, char rule, int repeats)
     return dstlen;
 }
 
-static int shrink(char *dst, int dstlen)
+static int shrink(char *dst)
 {
     shrink_rule(dst, 'I', 5);
     shrink_rule(dst, 'V', 2);
@@ -63,10 +65,11 @@ static int shrink(char *dst, int dstlen)
     return shrink_rule(dst, 'D', 2);
 }
 
-static int expand(const char *num, int len, char *dst, int maxlen)
+static int expand(const char *num, char *dst, int maxlen)
 {
     *dst = 0;
     int dstlen = 0;
+    int len = strlen(num);
     int i;
 
     for (i = 0; i < len; i++) {
@@ -94,16 +97,19 @@ static int expand(const char *num, int len, char *dst, int maxlen)
     return dstlen;
 }
 
-void add(const char *first, int flen, const char *second, int slen, char *dst, int maxlen)
+void add(const char *first, const char *second, char *dst, int maxlen)
 {
+    int flen = strlen(first);
+    int slen = strlen(second);
+
     char ftmp[flen*3];
-    flen = expand(first, flen, ftmp, flen*3);
+    expand(first, ftmp, flen*3);
 
     char stmp[slen*3];
-    slen = expand(second, slen, stmp, slen*3);
+    expand(second, stmp, slen*3);
 
-    int dstlen = combine(ftmp, flen, stmp, slen, dst, maxlen);
-    dstlen = shrink(dst, dstlen);
+    int dstlen = combine(ftmp, stmp, dst, maxlen);
+    dstlen = shrink(dst);
 
     if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
         strncpy(dst+dstlen-5, "IX", 5);
