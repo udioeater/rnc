@@ -68,20 +68,20 @@ static int expand(const char *num, char *dst, int maxlen)
     int i;
 
     for (i = 0; i < len; i++) {
-        if (0 == strncmp(num+i, "XC", 2)) {
-            strncat(dst, "LXXXX", 5);
+        if (0 == strcmp(num+i, "XC")) {
+            strcat(dst, "LXXXX");
             dstlen += 5;
             i++;
-        } else if (0 == strncmp(num+i, "XL", 2)) {
-            strncat(dst, "XXXX", 4);
+        } else if (0 == strcmp(num+i, "XL")) {
+            strcat(dst, "XXXX");
             dstlen += 4;
             i++;
-        } else if (0 == strncmp(num+i, "IX", 2)) {
-            strncat(dst, "VIIII", 5);
+        } else if (0 == strcmp(num+i, "IX")) {
+            strcat(dst, "VIIII");
             dstlen += 5;
             i++;
-        } else if (0 == strncmp(num+i, "IV", 2)) {
-            strncat(dst, "IIII", 4);
+        } else if (0 == strcmp(num+i, "IV")) {
+            strcat(dst, "IIII");
             dstlen += 4;
             i++;
         } else {
@@ -106,13 +106,13 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     int dstlen = shrink(dst);
 
     if (0 == strcmp(dst, "XXXX")) {
-        strncpy(dst+dstlen-4, "XL", 4);
+        strcpy(dst+dstlen-4, "XL");
         dstlen -= 2;
-    } else if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
-        strncpy(dst+dstlen-5, "IX", 5);
+    } else if (0 == strcmp(dst+dstlen-5, "VIIII")) {
+        strcpy(dst+dstlen-5, "IX");
         dstlen -= 3;
-    } else if (0 == strncmp(dst+dstlen-4, "IIII", 4)) {
-        strncpy(dst+dstlen-4, "IV", 4);
+    } else if (0 == strcmp(dst+dstlen-4, "IIII")) {
+        strcpy(dst+dstlen-4, "IV");
         dstlen -= 2;
     }
 }
