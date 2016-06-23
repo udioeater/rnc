@@ -56,7 +56,7 @@ static int shrink(char *dst)
     shrink_rule(dst, 'D', 2);
 }
 
-static int expand(const char *num, char *dst, int maxlen)
+static int expand(const char *num, char *dst)
 {
     *dst = 0;
     int dstlen = 0;
@@ -127,11 +127,11 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 {
     int flen = strlen(first);
     char ftmp[flen*3];
-    expand(first, ftmp, flen*3);
+    expand(first, ftmp);
 
     int slen = strlen(second);
     char stmp[slen*3];
-    expand(second, stmp, slen*3);
+    expand(second, stmp);
 
     combine(ftmp, stmp, dst, maxlen);
     shrink(dst);
