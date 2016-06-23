@@ -310,6 +310,16 @@ START_TEST (add_DCCV_plus_CCX_returns_CMXV)
 }
 END_TEST
 
+START_TEST (add_returns_empty_string_when_maxlen_is_too_small)
+{
+    int maxlen = 2;
+    char answer[maxlen];
+
+    add("II", "I", answer, maxlen);
+    ck_assert_str_eq("", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -317,12 +327,14 @@ Suite* rnc_suite(void)
     TCase *ordering;
     TCase *combining;
     TCase *shorthand;
+    TCase *errors;
 
     s = suite_create("RNC-add");
     basic = tcase_create("basic");
     ordering = tcase_create("ordering");
     combining = tcase_create("combining");
     shorthand = tcase_create("shorthand");
+    errors = tcase_create("errors");
 
     tcase_add_test(basic, add_I_plus_I_returns_II);
     tcase_add_test(basic, add_II_plus_I_returns_III);
@@ -352,11 +364,13 @@ Suite* rnc_suite(void)
     tcase_add_test(shorthand, add_CCII_plus_CCII_returns_CDIV);
     tcase_add_test(shorthand, add_XX_plus_XXV_returns_XLV);
     tcase_add_test(shorthand, add_DCCV_plus_CCX_returns_CMXV);
+    tcase_add_test(errors, add_returns_empty_string_when_maxlen_is_too_small);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
     suite_add_tcase(s, combining);
     suite_add_tcase(s, shorthand);
+    suite_add_tcase(s, errors);
 
     return s;
 }
