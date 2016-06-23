@@ -91,23 +91,33 @@ static int expand(const char *num, char *dst, int maxlen)
 static void compress(char *dst)
 {
     int dstlen = strlen(dst);
+    char tmp[dstlen];
+    tmp[0] = 0;
+    int i;
 
-    if (0 == strcmp(dst, "CCCC")) {
-        strcpy(dst+dstlen-4, "CD");
-        dstlen -= 2;
-    } else if (0 == strcmp(dst, "LXXXX")) {
-        strcpy(dst+dstlen-5, "XC");
-        dstlen -=3;
-    } else if (0 == strcmp(dst, "XXXX")) {
-        strcpy(dst+dstlen-4, "XL");
-        dstlen -= 2;
-    } else if (0 == strcmp(dst+dstlen-5, "VIIII")) {
-        strcpy(dst+dstlen-5, "IX");
-        dstlen -= 3;
-    } else if (0 == strcmp(dst+dstlen-4, "IIII")) {
-        strcpy(dst+dstlen-4, "IV");
-        dstlen -= 2;
+    for(i = 0; i < dstlen; i++)
+    {
+        if (0 == strcmp(dst+i, "CCCC")) {
+            strcat(tmp, "CD");
+            i += 3;
+        } else if (0 == strncmp(dst+i, "LXXXX", 5)) {
+            strcat(tmp, "XC");
+            i += 4;
+        } else if (0 == strcmp(dst+i, "XXXX")) {
+            strcat(tmp, "XL");
+            i += 3;
+        } else if (0 == strcmp(dst+i, "VIIII")) {
+            strcat(tmp, "IX");
+            i += 4;
+        } else if (0 == strcmp(dst+i, "IIII")) {
+            strcat(tmp, "IV");
+            i += 3;
+        } else {
+            strncat(tmp, dst+i, 1);
+        }
     }
+
+    strcpy(dst, tmp);
 }
 
 void add(const char *first, const char *second, char *dst, int maxlen)
@@ -122,6 +132,5 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
     combine(ftmp, stmp, dst, maxlen);
     shrink(dst);
-
     compress(dst);
 }
