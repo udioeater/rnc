@@ -97,7 +97,10 @@ static void compress(char *dst)
 
     for(i = 0; i < dstlen; i++)
     {
-        if (0 == strncmp(dst+i, "CCCC", 4)) {
+        if (0 == strncmp(dst+i, "DCCCC", 5)) {
+            strcat(tmp, "CM");
+            i += 4;
+        } else if (0 == strncmp(dst+i, "CCCC", 4)) {
             strcat(tmp, "CD");
             i += 3;
         } else if (0 == strncmp(dst+i, "LXXXX", 5)) {
