@@ -95,6 +95,9 @@ static void compress(char *dst)
     if (0 == strcmp(dst, "CCCC")) {
         strcpy(dst+dstlen-4, "CD");
         dstlen -= 2;
+    } else if (0 == strcmp(dst, "LXXXX")) {
+        strcpy(dst+dstlen-5, "XC");
+        dstlen -=3;
     } else if (0 == strcmp(dst, "XXXX")) {
         strcpy(dst+dstlen-4, "XL");
         dstlen -= 2;
