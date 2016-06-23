@@ -28,63 +28,39 @@ static int combine(const char *first, int flen, const char *second, int slen, ch
     return dstlen;
 }
 
-static int shrink(char *dst, int dstlen)
+static int shrink_rule(char *dst, char rule, int repeats)
 {
+    int dstlen = strlen(dst);
     char tmp[dstlen];
-
     tmp[0] = 0;
-    char *idx = index(dst, 'I');
-    if (NULL != idx && 0 == strncmp(idx, "IIIII", 5)) {
-        strcpy(dst+(idx-dst), "V");
-        dstlen -= 4;
+
+    char search[repeats];
+    int i;
+    for(i = 0; i < repeats; i++) {
+        search[i] = rule;
     }
 
-    tmp[0] = 0;
-    idx = index(dst, 'V');
-    if (NULL != idx && 0 == strncmp(idx, "VV", 2)) {
-        strcat(tmp, "X");
-        strcat(tmp, idx+2);
+    char *idx = index(dst, rule);
+    if (NULL != idx && 0 == strncmp(idx, search, repeats)) {
+        char *replace_with = index(ORDER, rule) - 1;
+        strncat(tmp, replace_with, 1);
+        strcat(tmp, idx+repeats);
         strcpy(dst+(idx-dst), tmp);
-        dstlen -= 1;
-    }
-
-    tmp[0] = 0;
-    idx = index(dst, 'X');
-    if (NULL != idx && 0 == strncmp(idx, "XXXXX", 5)) {
-        strcat(tmp, "L");
-        strcat(tmp, idx+5);
-        strcpy(dst+(idx-dst), tmp);
-        dstlen -= 4;
-    }
-
-    tmp[0] = 0;
-    idx = index(dst, 'L');
-    if (NULL != idx && 0 == strncmp(idx, "LL", 2)) {
-        strcat(tmp, "C");
-        strcat(tmp, idx+2);
-        strcpy(dst+(idx-dst), tmp);
-        dstlen -= 1;
-    }
-
-    tmp[0] = 0;
-    idx = index(dst, 'C');
-    if (NULL != idx && 0 == strncmp(idx, "CCCCC", 5)) {
-        strcat(tmp, "D");
-        strcat(tmp, idx+5);
-        strcpy(dst+(idx-dst), tmp);
-        dstlen -= 4;
-    }
-
-    tmp[0] = 0;
-    idx = index(dst, 'D');
-    if (NULL != idx && 0 == strncmp(idx, "DD", 2)) {
-        strcat(tmp, "M");
-        strcat(tmp, idx+2);
-        strcpy(dst+(idx-dst), tmp);
-        dstlen -= 1;
+        dstlen -= repeats;
+        dstlen++;
     }
 
     return dstlen;
+}
+
+static int shrink(char *dst, int dstlen)
+{
+    shrink_rule(dst, 'I', 5);
+    shrink_rule(dst, 'V', 2);
+    shrink_rule(dst, 'X', 5);
+    shrink_rule(dst, 'L', 2);
+    shrink_rule(dst, 'C', 5);
+    return shrink_rule(dst, 'D', 2);
 }
 
 static int expand(const char *num, int len, char *dst, int maxlen)
