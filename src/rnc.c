@@ -103,7 +103,7 @@ static void compress(char *dst)
         } else if (0 == strncmp(dst+i, "LXXXX", 5)) {
             strcat(tmp, "XC");
             i += 4;
-        } else if (0 == strcmp(dst+i, "XXXX")) {
+        } else if (0 == strncmp(dst+i, "XXXX", 4)) {
             strcat(tmp, "XL");
             i += 3;
         } else if (0 == strcmp(dst+i, "VIIII")) {
