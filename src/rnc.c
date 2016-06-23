@@ -92,7 +92,10 @@ static void compress(char *dst)
 {
     int dstlen = strlen(dst);
 
-    if (0 == strcmp(dst, "XXXX")) {
+    if (0 == strcmp(dst, "CCCC")) {
+        strcpy(dst+dstlen-4, "CD");
+        dstlen -= 2;
+    } else if (0 == strcmp(dst, "XXXX")) {
         strcpy(dst+dstlen-4, "XL");
         dstlen -= 2;
     } else if (0 == strcmp(dst+dstlen-5, "VIIII")) {
