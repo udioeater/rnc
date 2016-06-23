@@ -277,6 +277,17 @@ START_TEST (add_LXIII_plus_XXXI_returns_XCIV)
 }
 END_TEST
 
+START_TEST (add_CCII_plus_CCII_returns_CDIV)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("CCII", "CCII", answer, maxlen);
+
+    ck_assert_str_eq("CDIV", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -316,6 +327,7 @@ Suite* rnc_suite(void)
     tcase_add_test(shorthand, add_CC_plus_CC_returns_CD);
     tcase_add_test(shorthand, add_LX_plus_XXX_returns_XC);
     tcase_add_test(shorthand, add_LXIII_plus_XXXI_returns_XCIV);
+    tcase_add_test(shorthand, add_CCII_plus_CCII_returns_CDIV);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
