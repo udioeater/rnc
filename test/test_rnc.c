@@ -299,6 +299,17 @@ START_TEST (add_XX_plus_XXV_returns_XLV)
 }
 END_TEST
 
+START_TEST (add_DCCV_plus_CCX_returns_CMXV)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("DCCV", "CCX", answer, maxlen);
+
+    ck_assert_str_eq("CMXV", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -340,6 +351,7 @@ Suite* rnc_suite(void)
     tcase_add_test(shorthand, add_LXIII_plus_XXXI_returns_XCIV);
     tcase_add_test(shorthand, add_CCII_plus_CCII_returns_CDIV);
     tcase_add_test(shorthand, add_XX_plus_XXV_returns_XLV);
+    tcase_add_test(shorthand, add_DCCV_plus_CCX_returns_CMXV);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
