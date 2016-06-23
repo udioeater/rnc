@@ -200,6 +200,17 @@ START_TEST (add_XIV_plus_I_returns_XV)
 }
 END_TEST
 
+START_TEST (add_V_plus_CIX_returns_CXIV)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("V", 1, "CIX", 3, answer, maxlen);
+
+    ck_assert_str_eq("CXIV", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -232,6 +243,7 @@ Suite* rnc_suite(void)
     tcase_add_test(shorthand, add_IV_plus_I_returns_V);
     tcase_add_test(shorthand, add_V_plus_IX_returns_XIV);
     tcase_add_test(shorthand, add_XIV_plus_I_returns_XV);
+    tcase_add_test(shorthand, add_V_plus_CIX_returns_CXIV);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
