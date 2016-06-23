@@ -70,16 +70,19 @@ static int shrink(char *dst, int dstlen)
     return tmplen;
 }
 
-static int expand(const char *first, int flen, char *dst, int maxlen)
+static int expand(const char *num, int len, char *dst, int maxlen)
 {
     *dst = 0;
     int dstlen = 0;
-    if (0 == strncmp(first, "IV", 2)) {
+    if (0 == strncmp(num, "IX", 2)) {
+        strncat(dst, "VIIII", 5);
+        dstlen = 5;
+    } else if (0 == strncmp(num, "IV", 2)) {
         strncat(dst, "IIII", 4);
         dstlen = 4;
     } else {
-        strncat(dst, first, flen);
-        dstlen = flen;
+        strncat(dst, num, len);
+        dstlen = len;
     }
     return dstlen;
 }
@@ -89,7 +92,10 @@ void add(const char *first, int flen, const char *second, int slen, char *dst, i
     char ftmp[flen*3];
     flen = expand(first, flen, ftmp, flen*3);
 
-    int dstlen = combine(ftmp, flen, second, slen, dst, maxlen);
+    char stmp[slen*3];
+    slen = expand(second, slen, stmp, slen*3);
+
+    int dstlen = combine(ftmp, flen, stmp, slen, dst, maxlen);
     dstlen = shrink(dst, dstlen);
 
     if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
