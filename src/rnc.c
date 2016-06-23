@@ -77,7 +77,11 @@ static int expand(const char *num, int len, char *dst, int maxlen)
     int i;
 
     for (i = 0; i < len; i++) {
-        if (0 == strncmp(num+i, "IX", 2)) {
+        if (0 == strncmp(num+i, "XL", 2)) {
+            strncat(dst, "XXXX", 4);
+            dstlen += 4;
+            i++;
+        } else if (0 == strncmp(num+i, "IX", 2)) {
             strncat(dst, "VIIII", 5);
             dstlen += 5;
             i++;
