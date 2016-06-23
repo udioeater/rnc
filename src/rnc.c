@@ -25,7 +25,7 @@ static void combine(const char *first, const char *second, char *dst, int maxlen
     }
 }
 
-static int shrink_rule(char *dst, char rule, int repeats)
+static void shrink_rule(char *dst, char rule, int repeats)
 {
     int dstlen = strlen(dst);
     char tmp[dstlen];
@@ -43,11 +43,7 @@ static int shrink_rule(char *dst, char rule, int repeats)
         strncat(tmp, replace_with, 1);
         strcat(tmp, idx+repeats);
         strcpy(dst+(idx-dst), tmp);
-        dstlen -= repeats;
-        dstlen++;
     }
-
-    return dstlen;
 }
 
 static int shrink(char *dst)
@@ -57,7 +53,7 @@ static int shrink(char *dst)
     shrink_rule(dst, 'X', 5);
     shrink_rule(dst, 'L', 2);
     shrink_rule(dst, 'C', 5);
-    return shrink_rule(dst, 'D', 2);
+    shrink_rule(dst, 'D', 2);
 }
 
 static int expand(const char *num, char *dst, int maxlen)
@@ -92,18 +88,9 @@ static int expand(const char *num, char *dst, int maxlen)
     return dstlen;
 }
 
-void add(const char *first, const char *second, char *dst, int maxlen)
+static void compress(char *dst)
 {
-    int flen = strlen(first);
-    char ftmp[flen*3];
-    expand(first, ftmp, flen*3);
-
-    int slen = strlen(second);
-    char stmp[slen*3];
-    expand(second, stmp, slen*3);
-
-    combine(ftmp, stmp, dst, maxlen);
-    int dstlen = shrink(dst);
+    int dstlen = strlen(dst);
 
     if (0 == strcmp(dst, "XXXX")) {
         strcpy(dst+dstlen-4, "XL");
@@ -115,4 +102,20 @@ void add(const char *first, const char *second, char *dst, int maxlen)
         strcpy(dst+dstlen-4, "IV");
         dstlen -= 2;
     }
+}
+
+void add(const char *first, const char *second, char *dst, int maxlen)
+{
+    int flen = strlen(first);
+    char ftmp[flen*3];
+    expand(first, ftmp, flen*3);
+
+    int slen = strlen(second);
+    char stmp[slen*3];
+    expand(second, stmp, slen*3);
+
+    combine(ftmp, stmp, dst, maxlen);
+    shrink(dst);
+
+    compress(dst);
 }
