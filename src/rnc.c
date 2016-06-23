@@ -31,43 +31,60 @@ static int combine(const char *first, int flen, const char *second, int slen, ch
 static int shrink(char *dst, int dstlen)
 {
     char tmp[dstlen];
+
     tmp[0] = 0;
-    int tmplen = 0;
-    int i = 0;
-
-    for (i = 0; i < dstlen; i++) {
-        if (0 == strncmp(dst+i, "DD", 2)) {
-            strncat(tmp, "M", 1);
-            tmplen++;
-            i++;
-        } else if (0 == strncmp(dst+i, "CCCCC", 5)) {
-            strncat(tmp, "D", 1);
-            tmplen++;
-            i+=4;
-        } else if (0 == strncmp(dst+i, "LL", 2)) {
-            strncat(tmp, "C", 1);
-            tmplen++;
-            i++;
-        } else if (0 == strncmp(dst+i, "XXXXX", 5)) {
-            strncat(tmp, "L", 1);
-            tmplen++;
-            i+=4;
-        } else if (0 == strncmp(dst+i, "VV", 2)) {
-            strncat(tmp, "X", 1);
-            tmplen++;
-            i++;
-        } else if (0 == strncmp(dst+i, "IIIII", 5)) {
-            strncat(tmp, "V", 1);
-            tmplen++;
-            i+=4;
-        } else {
-            strncat(tmp, dst+i, 1);
-            tmplen++;
-        }
+    char *idx = index(dst, 'I');
+    if (NULL != idx && 0 == strncmp(idx, "IIIII", 5)) {
+        strcpy(dst+(idx-dst), "V");
+        dstlen -= 4;
     }
-    strncpy(dst, tmp, dstlen);
 
-    return tmplen;
+    tmp[0] = 0;
+    idx = index(dst, 'V');
+    if (NULL != idx && 0 == strncmp(idx, "VV", 2)) {
+        strcat(tmp, "X");
+        strcat(tmp, idx+2);
+        strcpy(dst+(idx-dst), tmp);
+        dstlen -= 1;
+    }
+
+    tmp[0] = 0;
+    idx = index(dst, 'X');
+    if (NULL != idx && 0 == strncmp(idx, "XXXXX", 5)) {
+        strcat(tmp, "L");
+        strcat(tmp, idx+5);
+        strcpy(dst+(idx-dst), tmp);
+        dstlen -= 4;
+    }
+
+    tmp[0] = 0;
+    idx = index(dst, 'L');
+    if (NULL != idx && 0 == strncmp(idx, "LL", 2)) {
+        strcat(tmp, "C");
+        strcat(tmp, idx+2);
+        strcpy(dst+(idx-dst), tmp);
+        dstlen -= 1;
+    }
+
+    tmp[0] = 0;
+    idx = index(dst, 'C');
+    if (NULL != idx && 0 == strncmp(idx, "CCCCC", 5)) {
+        strcat(tmp, "D");
+        strcat(tmp, idx+5);
+        strcpy(dst+(idx-dst), tmp);
+        dstlen -= 4;
+    }
+
+    tmp[0] = 0;
+    idx = index(dst, 'D');
+    if (NULL != idx && 0 == strncmp(idx, "DD", 2)) {
+        strcat(tmp, "M");
+        strcat(tmp, idx+2);
+        strcpy(dst+(idx-dst), tmp);
+        dstlen -= 1;
+    }
+
+    return dstlen;
 }
 
 static int expand(const char *num, int len, char *dst, int maxlen)
@@ -77,7 +94,11 @@ static int expand(const char *num, int len, char *dst, int maxlen)
     int i;
 
     for (i = 0; i < len; i++) {
-        if (0 == strncmp(num+i, "XL", 2)) {
+        if (0 == strncmp(num+i, "XC", 2)) {
+            strncat(dst, "LXXXX", 5);
+            dstlen += 5;
+            i++;
+        } else if (0 == strncmp(num+i, "XL", 2)) {
             strncat(dst, "XXXX", 4);
             dstlen += 4;
             i++;
