@@ -105,7 +105,10 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     combine(ftmp, stmp, dst, maxlen);
     int dstlen = shrink(dst);
 
-    if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
+    if (0 == strcmp(dst, "XXXX")) {
+        strncpy(dst+dstlen-4, "XL", 4);
+        dstlen -= 2;
+    } else if (0 == strncmp(dst+dstlen-5, "VIIII", 5)) {
         strncpy(dst+dstlen-5, "IX", 5);
         dstlen -= 3;
     } else if (0 == strncmp(dst+dstlen-4, "IIII", 4)) {
