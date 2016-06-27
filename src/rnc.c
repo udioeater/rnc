@@ -1,21 +1,24 @@
 #include "rnc.h"
 #include <string.h>
+#include <stdbool.h>
 
 static const char ORDER[7] = "MDCLXVI";
 
-static void combine(const char *first, const char *second, char *dst, int maxlen)
+static void combine(const char *first, const char *second, char *dst)
 {
     *dst = 0;
-    int flen = strlen(first);
-    int slen = strlen(second);
+    int total_len = strlen(first) + strlen(second);
     int i = 0;
     int j = 0;
 
-    while (strlen(dst) <= (flen + slen - 1)) {
+    while (strlen(dst) < total_len) {
         char *fidx = index(ORDER, *(first+i));
         char *sidx = index(ORDER, *(second+j));
+        bool used_all_s_digits = (NULL == sidx);
+        bool f_digit_comes_before_s = (fidx < sidx);
+        bool take_next_digit_from_f = (used_all_s_digits || f_digit_comes_before_s);
 
-        if (NULL == sidx || (fidx < sidx)) {
+        if (take_next_digit_from_f) {
             strncat(dst, first+i, 1);
             i++;
         } else {
@@ -133,7 +136,7 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     expand(second, stmp);
 
     char tmp[strlen(ftmp) + strlen(stmp)];
-    combine(ftmp, stmp, tmp, maxlen);
+    combine(ftmp, stmp, tmp);
     shrink_basic(tmp);
     compress(tmp);
 
