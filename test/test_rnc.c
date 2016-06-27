@@ -332,6 +332,16 @@ START_TEST (add_handles_too_large_intermediate_value)
 }
 END_TEST
 
+START_TEST (add_returns_when_result_is_small_enough)
+{
+    int maxlen = 1;
+    char answer[maxlen];
+
+    add("IV", "I", answer, maxlen);
+    ck_assert_str_eq("V", answer);
+}
+END_TEST
+
 Suite* rnc_suite(void)
 {
     Suite *s;
@@ -378,6 +388,7 @@ Suite* rnc_suite(void)
     tcase_add_test(shorthand, add_DCCV_plus_CCX_returns_CMXV);
     tcase_add_test(errors, add_returns_empty_string_when_maxlen_is_too_small);
     tcase_add_test(errors, add_handles_too_large_intermediate_value);
+    tcase_add_test(errors, add_returns_when_result_is_small_enough);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
