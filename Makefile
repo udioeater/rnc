@@ -2,7 +2,7 @@ run-tests: tests
 	./tests
 
 rnc: src/rnc.c src/rnc.h
-	gcc -c src/rnc.c -o rnc.o
+	gcc -Wall -c src/rnc.c -o rnc.o
 	ar rcs librnc.a rnc.o
 
 test_rnc: test/test_rnc.c src/rnc.h
