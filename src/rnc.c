@@ -31,16 +31,17 @@ static void combine(char *dst, const char *first, const char *second)
 
 static void shrink(char *dst, char *search)
 {
-    int dstlen = strlen(dst);
-    char search_len = strlen(search);
-    char tmp[dstlen];
-    tmp[0] = 0;
-
     char *idx = strstr(dst, search);
     if (NULL != idx) {
         char *replace_with = index(ORDER, search[0]) - 1;
+        char tmp[strlen(dst)];
+        tmp[0] = 0;
+
         strncat(tmp, replace_with, 1);
-        strcat(tmp, idx+search_len);
+
+        const char *trailing_chars = idx + strlen(search);
+        strcat(tmp, trailing_chars);
+
         strcpy(dst+(idx-dst), tmp);
     }
 }
