@@ -5,7 +5,7 @@
 static const char ORDER[7] = "MDCLXVI";
 static const int MAX_EXPAND_MULTIPLIER = 3;
 
-static void combine(const char *first, const char *second, char *dst)
+static void combine(char *dst, const char *first, const char *second)
 {
     *dst = 0;
     int total_len = strlen(first) + strlen(second);
@@ -13,10 +13,10 @@ static void combine(const char *first, const char *second, char *dst)
     int j = 0;
 
     while (strlen(dst) < total_len) {
-        char *fidx = index(ORDER, *(first+i));
-        char *sidx = index(ORDER, *(second+j));
-        bool used_all_s_digits = (NULL == sidx);
-        bool f_digit_comes_before_s = (fidx < sidx);
+        char *f_digit = index(ORDER, *(first+i));
+        char *s_digit = index(ORDER, *(second+j));
+        bool used_all_s_digits = (NULL == s_digit);
+        bool f_digit_comes_before_s = (f_digit < s_digit);
         bool take_next_digit_from_f = (used_all_s_digits || f_digit_comes_before_s);
 
         if (take_next_digit_from_f) {
@@ -125,7 +125,7 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     expand(second, stmp);
 
     char tmp[strlen(ftmp) + strlen(stmp)];
-    combine(ftmp, stmp, tmp);
+    combine(tmp, ftmp, stmp);
     shrink_basic(tmp);
     compress(tmp);
 
