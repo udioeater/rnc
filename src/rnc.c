@@ -116,8 +116,6 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     int flen = strlen(first);
     int slen = strlen(second);
 
-    if (maxlen < flen + slen) return;
-
     char ftmp[flen * MAX_EXPAND_MULTIPLIER];
     expand(first, ftmp);
 
@@ -129,5 +127,8 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     shrink_basic(tmp);
     compress(tmp);
 
-    strncpy(dst, tmp, strlen(tmp));
+    int final_len = strlen(tmp);
+    if (maxlen < final_len) return;
+
+    strncpy(dst, tmp, final_len);
 }
