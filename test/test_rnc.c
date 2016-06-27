@@ -399,9 +399,14 @@ Suite* addition_suite(void)
     return s;
 }
 
-START_TEST (test)
+START_TEST (subtract_II_minus_I_returns_I)
 {
-    ck_assert_str_eq("I", "II");
+    int maxlen = 10;
+    char answer[maxlen];
+
+    subtract("II", "I", answer, maxlen);
+
+    ck_assert_str_eq("I", answer);
 }
 END_TEST
 
@@ -413,7 +418,7 @@ Suite* subtraction_suite(void)
     s = suite_create("RNC-subtraction");
     basic = tcase_create("basic");
 
-    tcase_add_test(basic, test);
+    tcase_add_test(basic, subtract_II_minus_I_returns_I);
 
     suite_add_tcase(s, basic);
 
