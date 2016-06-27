@@ -125,5 +125,9 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
-    strncpy(dst, lhs, 1);
+    int i = 0;
+
+    i = replace_from_front(dst, lhs, rhs, "");
+
+    strcat(dst, lhs+i);
 }
