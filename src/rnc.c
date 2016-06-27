@@ -87,37 +87,32 @@ static int expand(const char *num, char *dst)
     return dstlen;
 }
 
+static int compress_single(char *dst, const char *src, const char *search, const char *replacement)
+{
+    char *idx = strstr(src, search);
+    if (NULL != idx) {
+        int chars_before_match = idx - src;
+        strncat(dst, src, chars_before_match);
+        strcat(dst, replacement);
+        return strlen(search) + chars_before_match;
+    }
+    return 0;
+}
+
 static void compress(char *dst)
 {
     int dstlen = strlen(dst);
     char tmp[dstlen];
     tmp[0] = 0;
-    int i;
+    int i = 0;
 
-    for(i = 0; i < dstlen; i++)
-    {
-        if (0 == strncmp(dst+i, "DCCCC", 5)) {
-            strcat(tmp, "CM");
-            i += 4;
-        } else if (0 == strncmp(dst+i, "CCCC", 4)) {
-            strcat(tmp, "CD");
-            i += 3;
-        } else if (0 == strncmp(dst+i, "LXXXX", 5)) {
-            strcat(tmp, "XC");
-            i += 4;
-        } else if (0 == strncmp(dst+i, "XXXX", 4)) {
-            strcat(tmp, "XL");
-            i += 3;
-        } else if (0 == strcmp(dst+i, "VIIII")) {
-            strcat(tmp, "IX");
-            i += 4;
-        } else if (0 == strcmp(dst+i, "IIII")) {
-            strcat(tmp, "IV");
-            i += 3;
-        } else {
-            strncat(tmp, dst+i, 1);
-        }
-    }
+    i += compress_single(tmp, dst+i, "DCCCC", "CM");
+    i += compress_single(tmp, dst+i, "CCCC", "CD");
+    i += compress_single(tmp, dst+i, "LXXXX", "XC");
+    i += compress_single(tmp, dst+i, "XXXX", "XL");
+    i += compress_single(tmp, dst+i, "VIIII", "IX");
+    i += compress_single(tmp, dst+i, "IIII", "IV");
+    strcat(tmp, dst+i);
 
     strcpy(dst, tmp);
 }
