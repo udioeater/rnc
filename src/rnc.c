@@ -55,36 +55,29 @@ static void shrink_basic(char *dst)
     shrink(dst, "DD");
 }
 
-static int expand(const char *num, char *dst)
+static int expand_single(char *dst, const char *num, const char *search, const char *replacement)
+{
+    char *idx = strstr(num, search);
+    if (NULL != idx) {
+        int chars_before_match = idx - num;
+        strncat(dst, num, chars_before_match);
+        strcat(dst, replacement);
+        return strlen(search) + chars_before_match;
+    }
+    return 0;
+}
+
+static void expand(const char *num, char *dst)
 {
     *dst = 0;
-    int dstlen = 0;
-    int len = strlen(num);
-    int i;
+    int i = 0;
 
-    for (i = 0; i < len; i++) {
-        if (0 == strcmp(num+i, "XC")) {
-            strcat(dst, "LXXXX");
-            dstlen += 5;
-            i++;
-        } else if (0 == strcmp(num+i, "XL")) {
-            strcat(dst, "XXXX");
-            dstlen += 4;
-            i++;
-        } else if (0 == strcmp(num+i, "IX")) {
-            strcat(dst, "VIIII");
-            dstlen += 5;
-            i++;
-        } else if (0 == strcmp(num+i, "IV")) {
-            strcat(dst, "IIII");
-            dstlen += 4;
-            i++;
-        } else {
-            strncat(dst, num+i, 1);
-            dstlen++;
-        }
-    }
-    return dstlen;
+    i += expand_single(dst, num+i, "XC", "LXXXX");
+    i += expand_single(dst, num+i, "XL", "XXXX");
+    i += expand_single(dst, num+i, "IX", "VIIII");
+    i += expand_single(dst, num+i, "IV", "IIII");
+
+    strcat(dst, num+i);
 }
 
 static int compress_single(char *dst, const char *src, const char *search, const char *replacement)
