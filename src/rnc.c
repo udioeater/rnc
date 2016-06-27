@@ -29,7 +29,7 @@ static void combine(char *dst, const char *first, const char *second)
     }
 }
 
-static void shrink(char *dst, char *search)
+static void replace_to_end(char *dst, char *search)
 {
     char *idx = strstr(dst, search);
     if (NULL != idx) {
@@ -46,17 +46,17 @@ static void shrink(char *dst, char *search)
     }
 }
 
-static void shrink_basic(char *dst)
+static void shrink(char *dst)
 {
-    shrink(dst, "IIIII");
-    shrink(dst, "VV");
-    shrink(dst, "XXXXX");
-    shrink(dst, "LL");
-    shrink(dst, "CCCCC");
-    shrink(dst, "DD");
+    replace_to_end(dst, "IIIII");
+    replace_to_end(dst, "VV");
+    replace_to_end(dst, "XXXXX");
+    replace_to_end(dst, "LL");
+    replace_to_end(dst, "CCCCC");
+    replace_to_end(dst, "DD");
 }
 
-static int replace(char *dst, const char *src, const char *search, const char *replacement)
+static int replace_from_front(char *dst, const char *src, const char *search, const char *replacement)
 {
     char *idx = strstr(src, search);
     if (NULL != idx) {
@@ -73,10 +73,10 @@ static void expand(const char *num, char *dst)
     *dst = 0;
     int i = 0;
 
-    i += replace(dst, num+i, "XC", "LXXXX");
-    i += replace(dst, num+i, "XL", "XXXX");
-    i += replace(dst, num+i, "IX", "VIIII");
-    i += replace(dst, num+i, "IV", "IIII");
+    i += replace_from_front(dst, num+i, "XC", "LXXXX");
+    i += replace_from_front(dst, num+i, "XL", "XXXX");
+    i += replace_from_front(dst, num+i, "IX", "VIIII");
+    i += replace_from_front(dst, num+i, "IV", "IIII");
 
     strcat(dst, num+i);
 }
@@ -88,12 +88,12 @@ static void compress(char *dst)
     tmp[0] = 0;
     int i = 0;
 
-    i += replace(tmp, dst+i, "DCCCC", "CM");
-    i += replace(tmp, dst+i, "CCCC", "CD");
-    i += replace(tmp, dst+i, "LXXXX", "XC");
-    i += replace(tmp, dst+i, "XXXX", "XL");
-    i += replace(tmp, dst+i, "VIIII", "IX");
-    i += replace(tmp, dst+i, "IIII", "IV");
+    i += replace_from_front(tmp, dst+i, "DCCCC", "CM");
+    i += replace_from_front(tmp, dst+i, "CCCC", "CD");
+    i += replace_from_front(tmp, dst+i, "LXXXX", "XC");
+    i += replace_from_front(tmp, dst+i, "XXXX", "XL");
+    i += replace_from_front(tmp, dst+i, "VIIII", "IX");
+    i += replace_from_front(tmp, dst+i, "IIII", "IV");
     strcat(tmp, dst+i);
 
     strcpy(dst, tmp);
@@ -113,7 +113,7 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
     char tmp[strlen(ftmp) + strlen(stmp)];
     combine(tmp, ftmp, stmp);
-    shrink_basic(tmp);
+    shrink(tmp);
     compress(tmp);
 
     int final_len = strlen(tmp);
