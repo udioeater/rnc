@@ -39,8 +39,8 @@ static void shrink(char *dst, char *search)
 
         strncat(tmp, replace_with, 1);
 
-        const char *trailing_chars = idx + strlen(search);
-        strcat(tmp, trailing_chars);
+        const char *trailing_digits = idx + strlen(search);
+        strcat(tmp, trailing_digits);
 
         strcpy(dst+(idx-dst), tmp);
     }
@@ -60,10 +60,10 @@ static int replace(char *dst, const char *src, const char *search, const char *r
 {
     char *idx = strstr(src, search);
     if (NULL != idx) {
-        int chars_before_match = idx - src;
-        strncat(dst, src, chars_before_match);
+        int digits_before_match = idx - src;
+        strncat(dst, src, digits_before_match);
         strcat(dst, replacement);
-        return strlen(search) + chars_before_match;
+        return strlen(search) + digits_before_match;
     }
     return 0;
 }
