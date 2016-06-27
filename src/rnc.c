@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 static const char ORDER[7] = "MDCLXVI";
+static const int MAX_EXPAND_MULTIPLIER = 3;
 
 static void combine(const char *first, const char *second, char *dst)
 {
@@ -129,10 +130,10 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
     if (maxlen < flen + slen) return;
 
-    char ftmp[flen*3];
+    char ftmp[flen * MAX_EXPAND_MULTIPLIER];
     expand(first, ftmp);
 
-    char stmp[slen*3];
+    char stmp[slen * MAX_EXPAND_MULTIPLIER];
     expand(second, stmp);
 
     char tmp[strlen(ftmp) + strlen(stmp)];
