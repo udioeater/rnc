@@ -36,8 +36,8 @@ static void shrink(char *dst, char *search)
     char tmp[dstlen];
     tmp[0] = 0;
 
-    char *idx = index(dst, search[0]);
-    if (NULL != idx && 0 == strncmp(idx, search, search_len)) {
+    char *idx = strstr(dst, search);
+    if (NULL != idx) {
         char *replace_with = index(ORDER, search[0]) - 1;
         strncat(tmp, replace_with, 1);
         strcat(tmp, idx+search_len);
