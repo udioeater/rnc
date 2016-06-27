@@ -55,32 +55,7 @@ static void shrink_basic(char *dst)
     shrink(dst, "DD");
 }
 
-static int expand_single(char *dst, const char *num, const char *search, const char *replacement)
-{
-    char *idx = strstr(num, search);
-    if (NULL != idx) {
-        int chars_before_match = idx - num;
-        strncat(dst, num, chars_before_match);
-        strcat(dst, replacement);
-        return strlen(search) + chars_before_match;
-    }
-    return 0;
-}
-
-static void expand(const char *num, char *dst)
-{
-    *dst = 0;
-    int i = 0;
-
-    i += expand_single(dst, num+i, "XC", "LXXXX");
-    i += expand_single(dst, num+i, "XL", "XXXX");
-    i += expand_single(dst, num+i, "IX", "VIIII");
-    i += expand_single(dst, num+i, "IV", "IIII");
-
-    strcat(dst, num+i);
-}
-
-static int compress_single(char *dst, const char *src, const char *search, const char *replacement)
+static int replace(char *dst, const char *src, const char *search, const char *replacement)
 {
     char *idx = strstr(src, search);
     if (NULL != idx) {
@@ -92,6 +67,19 @@ static int compress_single(char *dst, const char *src, const char *search, const
     return 0;
 }
 
+static void expand(const char *num, char *dst)
+{
+    *dst = 0;
+    int i = 0;
+
+    i += replace(dst, num+i, "XC", "LXXXX");
+    i += replace(dst, num+i, "XL", "XXXX");
+    i += replace(dst, num+i, "IX", "VIIII");
+    i += replace(dst, num+i, "IV", "IIII");
+
+    strcat(dst, num+i);
+}
+
 static void compress(char *dst)
 {
     int dstlen = strlen(dst);
@@ -99,12 +87,12 @@ static void compress(char *dst)
     tmp[0] = 0;
     int i = 0;
 
-    i += compress_single(tmp, dst+i, "DCCCC", "CM");
-    i += compress_single(tmp, dst+i, "CCCC", "CD");
-    i += compress_single(tmp, dst+i, "LXXXX", "XC");
-    i += compress_single(tmp, dst+i, "XXXX", "XL");
-    i += compress_single(tmp, dst+i, "VIIII", "IX");
-    i += compress_single(tmp, dst+i, "IIII", "IV");
+    i += replace(tmp, dst+i, "DCCCC", "CM");
+    i += replace(tmp, dst+i, "CCCC", "CD");
+    i += replace(tmp, dst+i, "LXXXX", "XC");
+    i += replace(tmp, dst+i, "XXXX", "XL");
+    i += replace(tmp, dst+i, "VIIII", "IX");
+    i += replace(tmp, dst+i, "IIII", "IV");
     strcat(tmp, dst+i);
 
     strcpy(dst, tmp);
