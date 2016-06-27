@@ -25,35 +25,30 @@ static void combine(const char *first, const char *second, char *dst, int maxlen
     }
 }
 
-static void shrink_rule(char *dst, char rule, int repeats)
+static void shrink(char *dst, char *search)
 {
     int dstlen = strlen(dst);
+    char search_len = strlen(search);
     char tmp[dstlen];
     tmp[0] = 0;
 
-    char search[repeats];
-    int i;
-    for(i = 0; i < repeats; i++) {
-        search[i] = rule;
-    }
-
-    char *idx = index(dst, rule);
-    if (NULL != idx && 0 == strncmp(idx, search, repeats)) {
-        char *replace_with = index(ORDER, rule) - 1;
+    char *idx = index(dst, search[0]);
+    if (NULL != idx && 0 == strncmp(idx, search, search_len)) {
+        char *replace_with = index(ORDER, search[0]) - 1;
         strncat(tmp, replace_with, 1);
-        strcat(tmp, idx+repeats);
+        strcat(tmp, idx+search_len);
         strcpy(dst+(idx-dst), tmp);
     }
 }
 
-static void shrink(char *dst)
+static void shrink_basic(char *dst)
 {
-    shrink_rule(dst, 'I', 5);
-    shrink_rule(dst, 'V', 2);
-    shrink_rule(dst, 'X', 5);
-    shrink_rule(dst, 'L', 2);
-    shrink_rule(dst, 'C', 5);
-    shrink_rule(dst, 'D', 2);
+    shrink(dst, "IIIII");
+    shrink(dst, "VV");
+    shrink(dst, "XXXXX");
+    shrink(dst, "LL");
+    shrink(dst, "CCCCC");
+    shrink(dst, "DD");
 }
 
 static int expand(const char *num, char *dst)
@@ -139,7 +134,7 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
     char tmp[strlen(ftmp) + strlen(stmp)];
     combine(ftmp, stmp, tmp, maxlen);
-    shrink(tmp);
+    shrink_basic(tmp);
     compress(tmp);
 
     strncpy(dst, tmp, strlen(tmp));
