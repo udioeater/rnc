@@ -46,7 +46,7 @@ static void shrink_rule(char *dst, char rule, int repeats)
     }
 }
 
-static int shrink(char *dst)
+static void shrink(char *dst)
 {
     shrink_rule(dst, 'I', 5);
     shrink_rule(dst, 'V', 2);
