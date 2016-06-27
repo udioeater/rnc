@@ -342,7 +342,7 @@ START_TEST (add_returns_when_result_is_small_enough)
 }
 END_TEST
 
-Suite* rnc_suite(void)
+Suite* addition_suite(void)
 {
     Suite *s;
     TCase *basic;
@@ -351,7 +351,7 @@ Suite* rnc_suite(void)
     TCase *shorthand;
     TCase *errors;
 
-    s = suite_create("RNC-add");
+    s = suite_create("RNC-addition");
     basic = tcase_create("basic");
     ordering = tcase_create("ordering");
     combining = tcase_create("combining");
@@ -399,14 +399,38 @@ Suite* rnc_suite(void)
     return s;
 }
 
+START_TEST (test)
+{
+    ck_assert_str_eq("I", "II");
+}
+END_TEST
+
+Suite* subtraction_suite(void)
+{
+    Suite *s;
+    TCase *basic;
+
+    s = suite_create("RNC-subtraction");
+    basic = tcase_create("basic");
+
+    tcase_add_test(basic, test);
+
+    suite_add_tcase(s, basic);
+
+    return s;
+}
+
 int main(void)
 {
     int failures;
     Suite *s;
     SRunner *sr;
     
-    s = rnc_suite();
+    s = addition_suite();
     sr = srunner_create(s);
+
+    s = subtraction_suite();
+    srunner_add_suite(sr, s);
 
     srunner_run_all(sr, CK_NORMAL);
     failures = srunner_ntests_failed(sr);
