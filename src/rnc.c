@@ -138,9 +138,12 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
     int i;
-    char tmp[strlen(lhs)];
-    strcpy(tmp, lhs);
 
+    char ltmp[strlen(lhs)*MAX_EXPAND_MULTIPLIER];
+    expand(lhs, ltmp);
+
+    char tmp[strlen(lhs)];
+    strcpy(tmp, ltmp);
     for (i = 0; i < strlen(rhs); i++)
     {
         *dst = 0;
