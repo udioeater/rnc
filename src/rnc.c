@@ -142,13 +142,11 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     char ltmp[strlen(lhs)*MAX_EXPAND_MULTIPLIER];
     expand(lhs, ltmp);
 
-    char tmp[strlen(lhs)];
-    strcpy(tmp, ltmp);
     for (i = 0; i < strlen(rhs); i++)
     {
         *dst = 0;
         char digit_to_erase[2] = { rhs[i], 0 };
-        remove(dst, tmp, digit_to_erase);
-        strcpy(tmp, dst);
+        remove(dst, ltmp, digit_to_erase);
+        strcpy(ltmp, dst);
     }
 }
