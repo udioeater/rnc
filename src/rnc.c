@@ -124,13 +124,12 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
 static bool remove(char *dst, const char *src, const char *search)
 {
+    strcpy(dst, src);
     char *idx = strstr(src, search);
     if (NULL != idx) {
         int digits_before_match = idx - src;
-        strncat(dst, src, digits_before_match);
-
         const char *trailing_digits = idx + strlen(search);
-        strcat(dst, trailing_digits);
+        strcpy(dst + digits_before_match, trailing_digits);
         return true;
     }
 
@@ -155,12 +154,8 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     while (strlen(rtmp) > 0)
     {
         char digit_to_erase[2] = { rtmp[0], 0 };
-        *dst = 0;
         if (remove(dst, ltmp, digit_to_erase)) {
-            char tmp[strlen(rtmp)];
-            tmp[0]=0;
-            remove(tmp, rtmp, digit_to_erase);
-            strcpy(rtmp, tmp);
+            remove(rtmp, rtmp, digit_to_erase);
             strcpy(ltmp, dst);
         } else {
             break_up(ltmp);
