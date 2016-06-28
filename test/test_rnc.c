@@ -476,15 +476,28 @@ START_TEST (subtract_IX_minus_VII_returns_II)
 }
 END_TEST
 
+START_TEST (subtract_V_minus_II_returns_III)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    subtract("V", "II", answer, maxlen);
+
+    ck_assert_str_eq("III", answer);
+}
+END_TEST
+
 Suite* subtraction_suite(void)
 {
     Suite *s;
     TCase *basic;
     TCase *expand;
+    TCase *borrow;
 
     s = suite_create("RNC-subtraction");
     basic = tcase_create("basic");
     expand = tcase_create("expand");
+    borrow = tcase_create("borrow");
 
     tcase_add_test(basic, subtract_II_minus_I_returns_I);
     tcase_add_test(basic, subtract_VI_minus_I_returns_V);
@@ -493,9 +506,11 @@ Suite* subtraction_suite(void)
     tcase_add_test(basic, subtract_MDCLXVI_minus_DLXI_returns_MCV);
     tcase_add_test(expand, subtract_IV_minus_I_returns_III);
     tcase_add_test(expand, subtract_IX_minus_VII_returns_II);
+    tcase_add_test(borrow, subtract_V_minus_II_returns_III);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, expand);
+    suite_add_tcase(s, borrow);
 
     return s;
 }
