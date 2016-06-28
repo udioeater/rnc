@@ -122,12 +122,30 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     strncpy(dst, tmp, final_len);
 }
 
+static void remove(char *dst, const char *src, const char *search)
+{
+    char *idx = strstr(src, search);
+    if (NULL != idx) {
+        int digits_before_match = idx - src;
+        strncat(dst, src, digits_before_match);
+
+        const char *trailing_digits = idx + strlen(search);
+        strcat(dst, trailing_digits);
+    }
+}
+
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
-    int i = 0;
+    int i;
+    char tmp[strlen(lhs)];
+    strcpy(tmp, lhs);
 
-    i = replace_from_front(dst, lhs, rhs, "");
-
-    strcat(dst, lhs+i);
+    for (i = 0; i < strlen(rhs); i++)
+    {
+        *dst = 0;
+        char digit_to_erase[2] = { rhs[i], 0 };
+        remove(dst, tmp, digit_to_erase);
+        strcpy(tmp, dst);
+    }
 }
