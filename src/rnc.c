@@ -122,7 +122,7 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     strncpy(dst, tmp, final_len);
 }
 
-static void remove(char *dst, const char *src, const char *search)
+static bool remove(char *dst, const char *src, const char *search)
 {
     char *idx = strstr(src, search);
     if (NULL != idx) {
@@ -131,22 +131,39 @@ static void remove(char *dst, const char *src, const char *search)
 
         const char *trailing_digits = idx + strlen(search);
         strcat(dst, trailing_digits);
+        return true;
     }
+
+    return false;
+}
+
+static void break_up(char *num)
+{
+    strcpy(num, "IIIII");
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
-    int i;
 
     char ltmp[strlen(lhs)*MAX_EXPAND_MULTIPLIER];
     expand(lhs, ltmp);
 
-    for (i = 0; i < strlen(rhs); i++)
+    char rtmp[strlen(rhs)];
+    strcpy(rtmp, rhs);
+
+    while (strlen(rtmp) > 0)
     {
+        char digit_to_erase[2] = { rtmp[0], 0 };
         *dst = 0;
-        char digit_to_erase[2] = { rhs[i], 0 };
-        remove(dst, ltmp, digit_to_erase);
-        strcpy(ltmp, dst);
+        if (remove(dst, ltmp, digit_to_erase)) {
+            char tmp[strlen(rtmp)];
+            tmp[0]=0;
+            remove(tmp, rtmp, digit_to_erase);
+            strcpy(rtmp, tmp);
+            strcpy(ltmp, dst);
+        } else {
+            break_up(ltmp);
+        }
     }
 }
