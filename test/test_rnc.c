@@ -487,6 +487,17 @@ START_TEST (subtract_V_minus_II_returns_III)
 }
 END_TEST
 
+START_TEST (subtract_X_minus_V_returns_V)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    subtract("X", "V", answer, maxlen);
+
+    ck_assert_str_eq("V", answer);
+}
+END_TEST
+
 Suite* subtraction_suite(void)
 {
     Suite *s;
@@ -507,6 +518,7 @@ Suite* subtraction_suite(void)
     tcase_add_test(expand, subtract_IV_minus_I_returns_III);
     tcase_add_test(expand, subtract_IX_minus_VII_returns_II);
     tcase_add_test(borrow, subtract_V_minus_II_returns_III);
+    tcase_add_test(borrow, subtract_X_minus_V_returns_V);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, expand);
