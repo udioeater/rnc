@@ -138,7 +138,11 @@ static bool remove(char *dst, const char *src, const char *search)
 
 static void break_up(char *num)
 {
-    strcpy(num, "IIIII");
+    if (0 == strcmp(num, "X")) {
+        strcpy(num, "VV");
+    } else {
+        strcpy(num, "IIIII");
+    }
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
