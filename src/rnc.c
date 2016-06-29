@@ -141,7 +141,8 @@ static void break_up(char *num)
     if (0 == strcmp(num, "X")) {
         strcpy(num, "VV");
     } else {
-        strcpy(num, "IIIII");
+        int numlen = strlen(num);
+        strcpy(num+numlen-1, "IIIII");
     }
 }
 
@@ -153,7 +154,7 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     expand(lhs, ltmp);
 
     char rtmp[strlen(rhs)];
-    strcpy(rtmp, rhs);
+    expand(rhs, rtmp);
 
     while (strlen(rtmp) > 0)
     {
