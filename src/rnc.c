@@ -147,13 +147,12 @@ static const char *find_digit_to_break_up(const char *num, const char needed)
     return num + i;
 }
 
-static const conversion_t* find_conversion(const char *search, int len)
+static const conversion_t* find_basic_conversion(const char *little)
 {
     int i;
     for (i = 0; i < CONVERSION_COUNT; i++) {
         const conversion_t c = BASIC_CONVERSIONS[i];
-        if (0 == strncmp(search, c.little, len)
-                || 0 == strncmp(search, c.big, len))
+        if (0 == strncmp(little, c.little, 1))
             return &BASIC_CONVERSIONS[i];
     }
 
@@ -170,7 +169,7 @@ static void break_up(char *num, const char needed)
     tmp[0] = 0;
     strncat(tmp, num, leading_digits);
 
-    const conversion_t *c = find_conversion(break_point, 1);
+    const conversion_t *c = find_basic_conversion(break_point);
     strcat(tmp, c->big);
 
     strcat(tmp, break_point + 1);
