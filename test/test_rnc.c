@@ -342,6 +342,16 @@ START_TEST (add_returns_when_result_is_small_enough)
 }
 END_TEST
 
+START_TEST (add_CDI_plus_C_returns_DI)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("CDI", "C", answer, maxlen);
+    ck_assert_str_eq("DI", answer);
+}
+END_TEST
+
 Suite* addition_suite(void)
 {
     Suite *s;
@@ -389,6 +399,7 @@ Suite* addition_suite(void)
     tcase_add_test(errors, add_returns_empty_string_when_maxlen_is_too_small);
     tcase_add_test(errors, add_handles_too_large_intermediate_value);
     tcase_add_test(errors, add_returns_when_result_is_small_enough);
+    tcase_add_test(shorthand, add_CDI_plus_C_returns_DI);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
