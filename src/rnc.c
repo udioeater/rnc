@@ -76,13 +76,13 @@ static bool replace(char *dst, const char *src, const char *search, const char *
     return false;
 }
 
-static void shrink(char *dst)
+static void compress(char *dst, const conversion_t *cs)
 {
     int i;
     for (i = 0; i < CONVERSION_COUNT; i++) {
-        const conversion_t c = BASIC_CONVERSIONS[i];
-        const char *from = c.big;
-        const char *to = c.little;
+        const conversion_t *c = cs + i;
+        const char *from = c->big;
+        const char *to = c->little;
         replace(dst, dst, from, to);
     }
 }
@@ -101,17 +101,6 @@ static void expand(const char *num, char *dst)
     }
 }
 
-static void compress(char *dst)
-{
-    int i;
-    for (i = 0; i < CONVERSION_COUNT; i++) {
-        conversion_t c = SPECIAL_CONVERSIONS[i];
-        const char *from = c.big;
-        const char *to = c.little;
-        replace(dst, dst, from, to);
-    }
-}
-
 void add(const char *first, const char *second, char *dst, int maxlen)
 {
     *dst = 0;
@@ -126,8 +115,8 @@ void add(const char *first, const char *second, char *dst, int maxlen)
 
     char tmp[strlen(ftmp) + strlen(stmp)];
     combine(tmp, ftmp, stmp);
-    shrink(tmp);
-    compress(tmp);
+    compress(tmp, BASIC_CONVERSIONS);
+    compress(tmp, SPECIAL_CONVERSIONS);
 
     int final_len = strlen(tmp);
     if (maxlen < final_len) return;
