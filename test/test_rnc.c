@@ -553,6 +553,17 @@ START_TEST (subtract_DD_minus_CC_returns_DCCC)
 }
 END_TEST
 
+START_TEST (subtract_MM_minus_D_returns_MD)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    subtract("MM", "D", answer, maxlen);
+
+    ck_assert_str_eq("MD", answer);
+}
+END_TEST
+
 Suite* subtraction_suite(void)
 {
     Suite *s;
@@ -579,6 +590,7 @@ Suite* subtraction_suite(void)
     tcase_add_test(borrow, subtract_L_minus_XX_returns_XXX);
     tcase_add_test(borrow, subtract_CC_minus_L_returns_CL);
     tcase_add_test(borrow, subtract_DD_minus_CC_returns_DCCC);
+    tcase_add_test(borrow, subtract_MM_minus_D_returns_MD);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, expand);
