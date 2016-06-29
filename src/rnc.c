@@ -138,10 +138,10 @@ static bool remove(char *dst, const char *src, const char *search)
 
 static void break_up(char *num)
 {
-    if (0 == strcmp(num, "X")) {
-        strcpy(num, "VV");
+    int numlen = strlen(num);
+    if (0 == strcmp(num+numlen-1, "X")) {
+        strcpy(num+numlen-1, "VV");
     } else {
-        int numlen = strlen(num);
         strcpy(num+numlen-1, "IIIII");
     }
 }
