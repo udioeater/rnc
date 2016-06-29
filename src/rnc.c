@@ -76,11 +76,11 @@ static bool replace(char *dst, const char *src, const char *search, const char *
     return false;
 }
 
-static void compress(char *dst, const conversion_t *cs)
+static void compress(char *dst, const conversion_t *conversion_set)
 {
     int i;
     for (i = 0; i < CONVERSION_COUNT; i++) {
-        const conversion_t *c = cs + i;
+        const conversion_t *c = conversion_set + i;
         const char *from = c->big;
         const char *to = c->little;
         replace(dst, dst, from, to);
