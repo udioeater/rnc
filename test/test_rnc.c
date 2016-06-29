@@ -352,6 +352,16 @@ START_TEST (add_CDI_plus_C_returns_DI)
 }
 END_TEST
 
+START_TEST (add_CMV_plus_C_returns_MV)
+{
+    int maxlen = 10;
+    char answer[maxlen];
+
+    add("CMV", "C", answer, maxlen);
+    ck_assert_str_eq("MV", answer);
+}
+END_TEST
+
 Suite* addition_suite(void)
 {
     Suite *s;
@@ -400,6 +410,7 @@ Suite* addition_suite(void)
     tcase_add_test(errors, add_handles_too_large_intermediate_value);
     tcase_add_test(errors, add_returns_when_result_is_small_enough);
     tcase_add_test(shorthand, add_CDI_plus_C_returns_DI);
+    tcase_add_test(shorthand, add_CMV_plus_C_returns_MV);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, ordering);
