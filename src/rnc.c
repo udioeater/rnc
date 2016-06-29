@@ -4,6 +4,7 @@
 
 static const char ORDER[7] = "MDCLXVI";
 static const int MAX_EXPAND_MULTIPLIER = 3;
+static const int MAX_BORROW_MULTIPLIER = 5;
 
 static void combine(char *dst, const char *first, const char *second)
 {
@@ -156,7 +157,8 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
 
-    char ltmp[strlen(lhs)*MAX_EXPAND_MULTIPLIER];
+    int max_multiplier = MAX_EXPAND_MULTIPLIER * MAX_BORROW_MULTIPLIER;
+    char ltmp[strlen(lhs) * max_multiplier];
     expand(lhs, ltmp);
 
     char rtmp[strlen(rhs)];
