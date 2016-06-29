@@ -54,20 +54,26 @@ static void combine(char *dst, const char *first, const char *second)
     }
 }
 
-static void replace_to_end(char *dst, const char *search, const char *replacement)
+static bool replace(char *dst, const char *src, const char *search, const char *replacement)
 {
-    char *idx = strstr(dst, search);
-    if (NULL != idx) {
-        char tmp[strlen(dst)];
+    const char *match = strstr(src, search);
+    if (NULL != match) {
+        int newlen = strlen(src) - strlen(search) + strlen(replacement);
+        char tmp[newlen];
         tmp[0] = 0;
 
-        strcat(tmp, replacement);
+        int leading_digits = match - src;
+        const char *trailing_digits = match + strlen(search);
 
-        const char *trailing_digits = idx + strlen(search);
+        strncat(tmp, src, leading_digits);
+        strcat(tmp, replacement);
         strcat(tmp, trailing_digits);
 
-        strcpy(dst+(idx-dst), tmp);
+        strcpy(dst, tmp);
+        return true;
     }
+
+    return false;
 }
 
 static void shrink(char *dst)
@@ -77,55 +83,33 @@ static void shrink(char *dst)
         const conversion_t c = BASIC_CONVERSIONS[i];
         const char *from = c.big;
         const char *to = c.little;
-        replace_to_end(dst, from, to);
+        replace(dst, dst, from, to);
     }
-}
-
-static int replace_from_front(char *dst, const char *src, const char *search, const char *replacement)
-{
-    char *idx = strstr(src, search);
-    if (NULL != idx) {
-        int digits_before_match = idx - src;
-        strncat(dst, src, digits_before_match);
-        strcat(dst, replacement);
-        return strlen(search) + digits_before_match;
-    }
-    return 0;
 }
 
 static void expand(const char *num, char *dst)
 {
     *dst = 0;
-    int i = 0;
-    int j;
+    strcpy(dst, num);
+    int i;
 
-    for (j = 0; j < CONVERSION_COUNT; j++) {
-        conversion_t c = SPECIAL_CONVERSIONS[j];
+    for (i = 0; i < CONVERSION_COUNT; i++) {
+        conversion_t c = SPECIAL_CONVERSIONS[i];
         const char *from = c.little;
         const char *to = c.big;
-        i += replace_from_front(dst, num+i, from, to);
+        replace(dst, dst, from, to);
     }
-
-    strcat(dst, num+i);
 }
 
 static void compress(char *dst)
 {
-    int dstlen = strlen(dst);
-    char tmp[dstlen];
-    tmp[0] = 0;
-    int i = 0;
-    int j;
-
-    for (j = 0; j < CONVERSION_COUNT; j++) {
-        conversion_t c = SPECIAL_CONVERSIONS[j];
+    int i;
+    for (i = 0; i < CONVERSION_COUNT; i++) {
+        conversion_t c = SPECIAL_CONVERSIONS[i];
         const char *from = c.big;
         const char *to = c.little;
-        i += replace_from_front(tmp, dst+i, from, to);
+        replace(dst, dst, from, to);
     }
-
-    strcat(tmp, dst+i);
-    strcpy(dst, tmp);
 }
 
 void add(const char *first, const char *second, char *dst, int maxlen)
@@ -149,20 +133,6 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     if (maxlen < final_len) return;
 
     strncpy(dst, tmp, final_len);
-}
-
-static bool remove(char *dst, const char *src, const char *search)
-{
-    strcpy(dst, src);
-    char *idx = strstr(src, search);
-    if (NULL != idx) {
-        int digits_before_match = idx - src;
-        const char *trailing_digits = idx + strlen(search);
-        strcpy(dst + digits_before_match, trailing_digits);
-        return true;
-    }
-
-    return false;
 }
 
 static const char *find_digit_to_break_up(const char *num, const char needed)
@@ -221,8 +191,8 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     while (strlen(rtmp) > 0)
     {
         char digit_to_erase[2] = { rtmp[0], 0 };
-        if (remove(dst, ltmp, digit_to_erase)) {
-            remove(rtmp, rtmp, digit_to_erase);
+        if (replace(dst, ltmp, digit_to_erase, "")) {
+            replace(rtmp, rtmp, digit_to_erase, "");
             strcpy(ltmp, dst);
         } else {
             break_up(ltmp, digit_to_erase[0]);
