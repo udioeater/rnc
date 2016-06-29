@@ -6,6 +6,30 @@ static const char ORDER[7] = "MDCLXVI";
 static const int MAX_EXPAND_MULTIPLIER = 3;
 static const int MAX_BORROW_MULTIPLIER = 5;
 
+typedef struct {
+    char *little;
+    char *big;
+} conversion_t;
+
+static const int CONVERSION_COUNT = 6;
+static const conversion_t BASIC_CONVERSIONS[] = {
+    { .little = "V", .big = "IIIII" },
+    { .little = "X", .big = "VV" },
+    { .little = "L", .big = "XXXXX" },
+    { .little = "C", .big = "LL" },
+    { .little = "D", .big = "CCCCC" },
+    { .little = "M", .big = "DD" },
+};
+
+static const conversion_t SPECIAL_CONVERSIONS[] = {
+    { .little = "CM", .big = "DCCCC" },
+    { .little = "CD", .big = "CCCC" },
+    { .little = "XC", .big = "LXXXX" },
+    { .little = "XL", .big = "XXXX" },
+    { .little = "IX", .big = "VIIII" },
+    { .little = "IV", .big = "IIII" },
+};
+
 static void combine(char *dst, const char *first, const char *second)
 {
     *dst = 0;
@@ -30,15 +54,14 @@ static void combine(char *dst, const char *first, const char *second)
     }
 }
 
-static void replace_to_end(char *dst, char *search)
+static void replace_to_end(char *dst, const char *search, const char *replacement)
 {
     char *idx = strstr(dst, search);
     if (NULL != idx) {
-        char *replace_with = index(ORDER, search[0]) - 1;
         char tmp[strlen(dst)];
         tmp[0] = 0;
 
-        strncat(tmp, replace_with, 1);
+        strcat(tmp, replacement);
 
         const char *trailing_digits = idx + strlen(search);
         strcat(tmp, trailing_digits);
@@ -49,12 +72,13 @@ static void replace_to_end(char *dst, char *search)
 
 static void shrink(char *dst)
 {
-    replace_to_end(dst, "IIIII");
-    replace_to_end(dst, "VV");
-    replace_to_end(dst, "XXXXX");
-    replace_to_end(dst, "LL");
-    replace_to_end(dst, "CCCCC");
-    replace_to_end(dst, "DD");
+    int i;
+    for (i = 0; i < CONVERSION_COUNT; i++) {
+        const conversion_t c = BASIC_CONVERSIONS[i];
+        const char *from = c.big;
+        const char *to = c.little;
+        replace_to_end(dst, from, to);
+    }
 }
 
 static int replace_from_front(char *dst, const char *src, const char *search, const char *replacement)
@@ -73,13 +97,14 @@ static void expand(const char *num, char *dst)
 {
     *dst = 0;
     int i = 0;
+    int j;
 
-    i += replace_from_front(dst, num+i, "CM", "DCCCC");
-    i += replace_from_front(dst, num+i, "CD", "CCCC");
-    i += replace_from_front(dst, num+i, "XC", "LXXXX");
-    i += replace_from_front(dst, num+i, "XL", "XXXX");
-    i += replace_from_front(dst, num+i, "IX", "VIIII");
-    i += replace_from_front(dst, num+i, "IV", "IIII");
+    for (j = 0; j < CONVERSION_COUNT; j++) {
+        conversion_t c = SPECIAL_CONVERSIONS[j];
+        const char *from = c.little;
+        const char *to = c.big;
+        i += replace_from_front(dst, num+i, from, to);
+    }
 
     strcat(dst, num+i);
 }
@@ -90,15 +115,16 @@ static void compress(char *dst)
     char tmp[dstlen];
     tmp[0] = 0;
     int i = 0;
+    int j;
 
-    i += replace_from_front(tmp, dst+i, "DCCCC", "CM");
-    i += replace_from_front(tmp, dst+i, "CCCC", "CD");
-    i += replace_from_front(tmp, dst+i, "LXXXX", "XC");
-    i += replace_from_front(tmp, dst+i, "XXXX", "XL");
-    i += replace_from_front(tmp, dst+i, "VIIII", "IX");
-    i += replace_from_front(tmp, dst+i, "IIII", "IV");
+    for (j = 0; j < CONVERSION_COUNT; j++) {
+        conversion_t c = SPECIAL_CONVERSIONS[j];
+        const char *from = c.big;
+        const char *to = c.little;
+        i += replace_from_front(tmp, dst+i, from, to);
+    }
+
     strcat(tmp, dst+i);
-
     strcpy(dst, tmp);
 }
 
@@ -151,6 +177,19 @@ static const char *find_digit_to_break_up(const char *num, const char needed)
     return num + i;
 }
 
+static const conversion_t* find_conversion(const char *search, int len)
+{
+    int i;
+    for (i = 0; i < CONVERSION_COUNT; i++) {
+        const conversion_t c = BASIC_CONVERSIONS[i];
+        if (0 == strncmp(search, c.little, len)
+                || 0 == strncmp(search, c.big, len))
+            return &BASIC_CONVERSIONS[i];
+    }
+
+    return NULL;
+}
+
 static void break_up(char *num, const char needed)
 {
     const char *break_point = find_digit_to_break_up(num, needed);
@@ -161,19 +200,8 @@ static void break_up(char *num, const char needed)
     tmp[0] = 0;
     strncat(tmp, num, leading_digits);
 
-    if ('M' == *break_point) {
-        strcat(tmp, "DD");
-    } else if ('D' == *break_point) {
-        strcat(tmp, "CCCCC");
-    } else if ('C' == *break_point) {
-        strcat(tmp, "LL");
-    } else if ('L' == *break_point) {
-        strcat(tmp, "XXXXX");
-    } else if ('X' == *break_point) {
-        strcat(tmp, "VV");
-    } else {
-        strcat(tmp, "IIIII");
-    }
+    const conversion_t *c = find_conversion(break_point, 1);
+    strcat(tmp, c->big);
 
     strcat(tmp, break_point + 1);
     strcpy(num, tmp);
