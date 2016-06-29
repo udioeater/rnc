@@ -4,7 +4,7 @@
 
 static const char ORDER[7] = "MDCLXVI";
 static const int MAX_EXPAND_MULTIPLIER = 3;
-static const int MAX_BORROW_MULTIPLIER = 5;
+static const int BORROW_MULTIPLIER = 5;
 
 typedef struct {
     char *little;
@@ -162,34 +162,35 @@ static const conversion_t* find_basic_conversion(const char *little)
 static void break_up(char *num, const char needed)
 {
     const char *break_point = find_digit_to_break_up(num, needed);
+    const conversion_t *c = find_basic_conversion(break_point);
 
     int leading_digits = break_point - num;
-
     char tmp[strlen(num)];
     tmp[0] = 0;
+
     strncat(tmp, num, leading_digits);
-
-    const conversion_t *c = find_basic_conversion(break_point);
     strcat(tmp, c->big);
-
     strcat(tmp, break_point + 1);
+
     strcpy(num, tmp);
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
+    int l_len = strlen(lhs);
+    int r_len = strlen(rhs);
 
-    int max_multiplier = MAX_EXPAND_MULTIPLIER * MAX_BORROW_MULTIPLIER;
-    char ltmp[strlen(lhs) * max_multiplier];
+    char ltmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
     expand(lhs, ltmp);
 
-    char rtmp[strlen(rhs)];
+    char rtmp[r_len * MAX_EXPAND_MULTIPLIER];
     expand(rhs, rtmp);
 
     while (strlen(rtmp) > 0)
     {
         char digit_to_erase[2] = { rtmp[0], 0 };
+
         if (replace(dst, ltmp, digit_to_erase, "")) {
             replace(rtmp, rtmp, digit_to_erase, "");
             strcpy(ltmp, dst);
