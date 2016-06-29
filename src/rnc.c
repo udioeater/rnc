@@ -142,7 +142,9 @@ static void break_up(char *num)
     int numlen = strlen(num);
     char *last_digit = num + numlen - 1;
 
-    if (0 == strcmp(last_digit, "C")) {
+    if (0 == strcmp(last_digit, "D")) {
+        strcpy(last_digit, "CCCCC");
+    } else if (0 == strcmp(last_digit, "C")) {
         strcpy(last_digit, "LL");
     } else if (0 == strcmp(last_digit, "L")) {
         strcpy(last_digit, "XXXXX");
