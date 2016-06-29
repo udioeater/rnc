@@ -137,24 +137,44 @@ static bool remove(char *dst, const char *src, const char *search)
     return false;
 }
 
-static void break_up(char *num)
+static const char *find_digit_to_break_up(const char *num, const char needed)
 {
-    int numlen = strlen(num);
-    char *last_digit = num + numlen - 1;
+    int i = strlen(num) - 1;
+    char *idx = index(ORDER, needed);
 
-    if (0 == strcmp(last_digit, "M")) {
-        strcpy(last_digit, "DD");
-    } else if (0 == strcmp(last_digit, "D")) {
-        strcpy(last_digit, "CCCCC");
-    } else if (0 == strcmp(last_digit, "C")) {
-        strcpy(last_digit, "LL");
-    } else if (0 == strcmp(last_digit, "L")) {
-        strcpy(last_digit, "XXXXX");
-    } else if (0 == strcmp(last_digit, "X")) {
-        strcpy(last_digit, "VV");
-    } else {
-        strcpy(last_digit, "IIIII");
+    while(i >= 0 && index(ORDER, *(num+i)) > idx) {
+        i--;
     }
+
+    return num + i;
+}
+
+static void break_up(char *num, const char needed)
+{
+    const char *break_point = find_digit_to_break_up(num, needed);
+
+    int leading_digits = break_point - num;
+
+    char tmp[strlen(num)];
+    tmp[0] = 0;
+    strncat(tmp, num, leading_digits);
+
+    if ('M' == *break_point) {
+        strcat(tmp, "DD");
+    } else if ('D' == *break_point) {
+        strcat(tmp, "CCCCC");
+    } else if ('C' == *break_point) {
+        strcat(tmp, "LL");
+    } else if ('L' == *break_point) {
+        strcat(tmp, "XXXXX");
+    } else if ('X' == *break_point) {
+        strcat(tmp, "VV");
+    } else {
+        strcat(tmp, "IIIII");
+    }
+
+    strcat(tmp, break_point + 1);
+    strcpy(num, tmp);
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
@@ -175,7 +195,7 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
             remove(rtmp, rtmp, digit_to_erase);
             strcpy(ltmp, dst);
         } else {
-            break_up(ltmp);
+            break_up(ltmp, digit_to_erase[0]);
         }
     }
 }
