@@ -139,10 +139,14 @@ static bool remove(char *dst, const char *src, const char *search)
 static void break_up(char *num)
 {
     int numlen = strlen(num);
-    if (0 == strcmp(num+numlen-1, "X")) {
-        strcpy(num+numlen-1, "VV");
+    char *last_digit = num + numlen - 1;
+
+    if (0 == strcmp(last_digit, "L")) {
+        strcpy(last_digit, "XXXXX");
+    } else if (0 == strcmp(last_digit, "X")) {
+        strcpy(last_digit, "VV");
     } else {
-        strcpy(num+numlen-1, "IIIII");
+        strcpy(last_digit, "IIIII");
     }
 }
 
