@@ -74,6 +74,7 @@ static void expand(const char *num, char *dst)
     *dst = 0;
     int i = 0;
 
+    i += replace_from_front(dst, num+i, "CD", "CCCC");
     i += replace_from_front(dst, num+i, "XC", "LXXXX");
     i += replace_from_front(dst, num+i, "XL", "XXXX");
     i += replace_from_front(dst, num+i, "IX", "VIIII");
