@@ -168,6 +168,23 @@ static bool break_up(char *num, const char needed)
     return true;
 }
 
+void cancel(char *dst, char *lhs, char *rhs)
+{
+    *dst = 0;
+
+    while (strlen(rhs) > 0)
+    {
+        char digit_to_erase[2] = { rhs[0], 0 };
+
+        if (replace(dst, lhs, digit_to_erase, "")) {
+            replace(rhs, rhs, digit_to_erase, "");
+            strcpy(lhs, dst);
+        } else if (!break_up(lhs, digit_to_erase[0])) {
+            return;
+        }
+    }
+}
+
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
@@ -181,19 +198,7 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     expand(rhs, rtmp);
 
     char dtmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
-    dtmp[0] = 0;
-
-    while (strlen(rtmp) > 0)
-    {
-        char digit_to_erase[2] = { rtmp[0], 0 };
-
-        if (replace(dtmp, ltmp, digit_to_erase, "")) {
-            replace(rtmp, rtmp, digit_to_erase, "");
-            strcpy(ltmp, dtmp);
-        } else if (!break_up(ltmp, digit_to_erase[0])) {
-            return;
-        }
-    }
+    cancel(dtmp, ltmp, rtmp);
 
     int final_len = strlen(dtmp);
     if (maxlen < final_len) return;
