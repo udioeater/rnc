@@ -179,16 +179,23 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     char rtmp[r_len * MAX_EXPAND_MULTIPLIER];
     expand(rhs, rtmp);
 
+    char dtmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
+    dtmp[0] = 0;
+
     while (strlen(rtmp) > 0)
     {
         char digit_to_erase[2] = { rtmp[0], 0 };
 
-        if (replace(dst, ltmp, digit_to_erase, "")) {
+        if (replace(dtmp, ltmp, digit_to_erase, "")) {
             replace(rtmp, rtmp, digit_to_erase, "");
-            strcpy(ltmp, dst);
+            strcpy(ltmp, dtmp);
         } else if (!break_up(ltmp, digit_to_erase[0])) {
             *dst = 0;
             return;
         }
+    }
+
+    if (maxlen >= strlen(dtmp)) {
+        strcpy(dst, dtmp);
     }
 }
