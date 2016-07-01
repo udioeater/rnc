@@ -148,10 +148,12 @@ static const conversion_t* find_basic_conversion(const char *little)
     return NULL;
 }
 
-static void break_up(char *num, const char needed)
+static bool break_up(char *num, const char needed)
 {
     const char *break_point = find_digit_to_break_up(num, needed);
     const conversion_t *c = find_basic_conversion(break_point);
+
+    if (NULL == c) return false;
 
     int leading_digits = break_point - num;
     char tmp[strlen(num)];
@@ -162,6 +164,7 @@ static void break_up(char *num, const char needed)
     strcat(tmp, break_point + 1);
 
     strcpy(num, tmp);
+    return true;
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
@@ -183,8 +186,9 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
         if (replace(dst, ltmp, digit_to_erase, "")) {
             replace(rtmp, rtmp, digit_to_erase, "");
             strcpy(ltmp, dst);
-        } else {
-            break_up(ltmp, digit_to_erase[0]);
+        } else if (!break_up(ltmp, digit_to_erase[0])) {
+            *dst = 0;
+            return;
         }
     }
 }
