@@ -104,12 +104,12 @@ static void expand(const char *num, char *dst)
 void add(const char *first, const char *second, char *dst, int maxlen)
 {
     *dst = 0;
-    int flen = strlen(first);
-    int slen = strlen(second);
 
+    int flen = strlen(first);
     char ftmp[flen * MAX_EXPAND_MULTIPLIER];
     expand(first, ftmp);
 
+    int slen = strlen(second);
     char stmp[slen * MAX_EXPAND_MULTIPLIER];
     expand(second, stmp);
 
@@ -152,16 +152,17 @@ static bool break_up(char *num, const char needed)
 {
     const char *break_point = find_digit_to_break_up(num, needed);
     const conversion_t *c = find_basic_conversion(break_point);
-
     if (NULL == c) return false;
 
-    int leading_digits = break_point - num;
     char tmp[strlen(num)];
     tmp[0] = 0;
 
+    int leading_digits = break_point - num;
+    const char *trailing_digits = break_point + 1;
+
     strncat(tmp, num, leading_digits);
     strcat(tmp, c->big);
-    strcat(tmp, break_point + 1);
+    strcat(tmp, trailing_digits);
 
     strcpy(num, tmp);
     return true;
@@ -170,12 +171,12 @@ static bool break_up(char *num, const char needed)
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
-    int l_len = strlen(lhs);
-    int r_len = strlen(rhs);
 
+    int l_len = strlen(lhs);
     char ltmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
     expand(lhs, ltmp);
 
+    int r_len = strlen(rhs);
     char rtmp[r_len * MAX_EXPAND_MULTIPLIER];
     expand(rhs, rtmp);
 
@@ -190,12 +191,12 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
             replace(rtmp, rtmp, digit_to_erase, "");
             strcpy(ltmp, dtmp);
         } else if (!break_up(ltmp, digit_to_erase[0])) {
-            *dst = 0;
             return;
         }
     }
 
-    if (maxlen >= strlen(dtmp)) {
-        strcpy(dst, dtmp);
-    }
+    int final_len = strlen(dtmp);
+    if (maxlen < final_len) return;
+
+    strcpy(dst, dtmp);
 }
