@@ -630,6 +630,17 @@ START_TEST (subtract_returns_empty_string_when_lhs_is_smaller)
 }
 END_TEST
 
+START_TEST (subtract_returns_empty_string_when_maxlen_is_too_small)
+{
+    int maxlen = 1;
+    char answer[maxlen];
+
+    subtract("V", "I", answer, maxlen);
+
+    ck_assert_str_eq("", answer);
+}
+END_TEST
+
 Suite* subtraction_suite(void)
 {
     Suite *s;
@@ -663,6 +674,7 @@ Suite* subtraction_suite(void)
     tcase_add_test(borrow, subtract_MX_minus_D_returns_DX);
     tcase_add_test(borrow, subtract_XLII_minus_XVII_returns_XXV);
     tcase_add_test(invalid, subtract_returns_empty_string_when_lhs_is_smaller);
+    tcase_add_test(invalid, subtract_returns_empty_string_when_maxlen_is_too_small);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, expand);
