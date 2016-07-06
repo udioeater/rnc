@@ -200,6 +200,8 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     char dtmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
     cancel(dtmp, ltmp, rtmp);
 
+    compress(dtmp, SPECIAL_CONVERSIONS);
+
     int final_len = strlen(dtmp);
     if (maxlen < final_len) return;
 
