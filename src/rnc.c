@@ -180,6 +180,7 @@ void cancel(char *dst, char *lhs, char *rhs)
             replace(rhs, rhs, digit_to_erase, "");
             strcpy(lhs, dst);
         } else if (!break_up(lhs, digit_to_erase[0])) {
+            *dst = 0;
             return;
         }
     }
