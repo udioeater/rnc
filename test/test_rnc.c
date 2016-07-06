@@ -652,6 +652,17 @@ START_TEST (subtract_M_minus_I_returns_CMXCIX)
 }
 END_TEST
 
+START_TEST (subtract_XIV_minus_XVI_returns_empty_string)
+{
+    int maxlen = 7;
+    char answer[maxlen];
+
+    subtract("XIV", "XVI", answer, maxlen);
+
+    ck_assert_str_eq("", answer);
+}
+END_TEST
+
 Suite* subtraction_suite(void)
 {
     Suite *s;
@@ -687,6 +698,7 @@ Suite* subtraction_suite(void)
     tcase_add_test(invalid, subtract_returns_empty_string_when_lhs_is_smaller);
     tcase_add_test(invalid, subtract_returns_empty_string_when_maxlen_is_too_small);
     tcase_add_test(borrow, subtract_M_minus_I_returns_CMXCIX);
+    tcase_add_test(invalid, subtract_XIV_minus_XVI_returns_empty_string);
 
     suite_add_tcase(s, basic);
     suite_add_tcase(s, expand);
