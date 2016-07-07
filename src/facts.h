@@ -29,6 +29,4 @@ static const conversion_t SPECIAL_CONVERSIONS[] = {
     { .little = "IV", .big = "IIII" },
 };
 
-const char *lowest_bigger_digit(const char *num, const char digit);
-
 #endif /* _FACTS_H_ */

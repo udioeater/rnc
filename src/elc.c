@@ -18,6 +18,16 @@ int calculate_expand_len(const char *num)
     return len+1;
 }
 
+const char *lowest_bigger_digit(const char *num, const char digit)
+{
+    int i = strlen(num) - 1;
+    char *idx = index(ORDER, digit);
+
+    while(i >= 0 && index(ORDER, *(num+i)) > idx) { i--; }
+
+    return num + i;
+}
+
 int calculate_borrow_len(const char *lhs, const char *rhs)
 {
     int len = strlen(lhs);
