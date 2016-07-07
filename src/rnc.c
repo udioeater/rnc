@@ -1,5 +1,6 @@
 #include "rnc.h"
 #include <string.h>
+#include <strings.h>
 #include <stdbool.h>
 
 static const char ORDER[7] = "MDCLXVI";
@@ -78,8 +79,7 @@ static bool replace(char *dst, const char *src, const char *search, const char *
 
 static void compress(char *dst, const conversion_t *conversion_set)
 {
-    int i;
-    for (i = 0; i < CONVERSION_COUNT; i++) {
+    for (int i = 0; i < CONVERSION_COUNT; i++) {
         const conversion_t *c = conversion_set + i;
         const char *from = c->big;
         const char *to = c->little;
@@ -91,9 +91,8 @@ static void expand(const char *num, char *dst)
 {
     *dst = 0;
     strcpy(dst, num);
-    int i;
 
-    for (i = 0; i < CONVERSION_COUNT; i++) {
+    for (int i = 0; i < CONVERSION_COUNT; i++) {
         conversion_t c = SPECIAL_CONVERSIONS[i];
         const char *from = c.little;
         const char *to = c.big;
@@ -138,8 +137,7 @@ static const char *find_digit_to_break_up(const char *num, const char needed)
 
 static const conversion_t* find_basic_conversion(const char *little)
 {
-    int i;
-    for (i = 0; i < CONVERSION_COUNT; i++) {
+    for (int i = 0; i < CONVERSION_COUNT; i++) {
         const conversion_t c = BASIC_CONVERSIONS[i];
         if (0 == strncmp(little, c.little, 1))
             return &BASIC_CONVERSIONS[i];
@@ -168,19 +166,16 @@ static bool break_up(char *num, const char needed)
     return true;
 }
 
-void cancel(char *dst, char *lhs, char *rhs)
+void cancel(char *lhs, char *rhs)
 {
-    *dst = 0;
-
     while (strlen(rhs) > 0)
     {
         char digit_to_erase[2] = { rhs[0], 0 };
 
-        if (replace(dst, lhs, digit_to_erase, "")) {
+        if (replace(lhs, lhs, digit_to_erase, "")) {
             replace(rhs, rhs, digit_to_erase, "");
-            strcpy(lhs, dst);
         } else if (!break_up(lhs, digit_to_erase[0])) {
-            *dst = 0;
+            *lhs = 0;
             return;
         }
     }
@@ -198,13 +193,11 @@ void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
     char rtmp[r_len * MAX_EXPAND_MULTIPLIER];
     expand(rhs, rtmp);
 
-    char dtmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
-    cancel(dtmp, ltmp, rtmp);
+    cancel(ltmp, rtmp);
+    compress(ltmp, SPECIAL_CONVERSIONS);
 
-    compress(dtmp, SPECIAL_CONVERSIONS);
-
-    int final_len = strlen(dtmp);
+    int final_len = strlen(ltmp);
     if (maxlen < final_len) return;
 
-    strcpy(dst, dtmp);
+    strcpy(dst, ltmp);
 }
