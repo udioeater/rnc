@@ -100,16 +100,28 @@ static void expand(const char *num, char *dst)
     }
 }
 
+int calculate_expand_len(const char *num)
+{
+    int len = strlen(num);
+    for (int i = 0; i < CONVERSION_COUNT; i++)
+    {
+        if (NULL != strstr(num, SPECIAL_CONVERSIONS[i].little)) {
+            len -= 2;
+            len += strlen(SPECIAL_CONVERSIONS[i].big);
+        }
+    }
+
+    return len+1;
+}
+
 void add(const char *first, const char *second, char *dst, int maxlen)
 {
     *dst = 0;
 
-    int flen = strlen(first);
-    char ftmp[flen * MAX_EXPAND_MULTIPLIER];
+    char ftmp[calculate_expand_len(first)];
     expand(first, ftmp);
 
-    int slen = strlen(second);
-    char stmp[slen * MAX_EXPAND_MULTIPLIER];
+    char stmp[calculate_expand_len(second)];
     expand(second, stmp);
 
     char tmp[strlen(ftmp) + strlen(stmp)];
@@ -181,23 +193,65 @@ void cancel(char *lhs, char *rhs)
     }
 }
 
+int calculate_borrow_len(const char *lhs, const char *rhs)
+{
+    int len = strlen(lhs);
+    int j = 0;
+
+    for (int i = 0; i < strlen(rhs); i++)
+    {
+        char digit_to_find[2] = { rhs[i], 0 };
+        if (NULL != strstr(lhs+j, digit_to_find)) {
+            j++;
+            continue;
+        }
+        while (rhs[i] == digit_to_find[0]) i++;
+        char lowest_bigger_digit[2] = { 0, 0 };
+        lowest_bigger_digit[0] = *find_digit_to_break_up(lhs+j, digit_to_find[0]);
+
+        conversion_t c = { .little = "", .big = "" };
+        int k;
+        for (k = 0; k < CONVERSION_COUNT; k++) {
+            if (0 == strncmp(digit_to_find, BASIC_CONVERSIONS[k].big, 1)) {
+                c = BASIC_CONVERSIONS[k];
+                break;
+            }
+        }
+
+        if (c.little[0] == lowest_bigger_digit[0]) {
+            len += strlen(c.big) - 1;
+        }
+
+        while (c.little[0] != lowest_bigger_digit[0] && k < CONVERSION_COUNT)
+        {
+            c = BASIC_CONVERSIONS[k++];
+            len += strlen(c.big) - 1;
+        }
+
+        if (c.little[0] != lowest_bigger_digit[0]) return 0;
+    }
+
+    return len+1;
+}
+
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
 {
     *dst = 0;
 
-    int l_len = strlen(lhs);
-    char ltmp[l_len * MAX_EXPAND_MULTIPLIER * BORROW_MULTIPLIER];
+    char ltmp[calculate_expand_len(lhs)];
     expand(lhs, ltmp);
 
-    int r_len = strlen(rhs);
-    char rtmp[r_len * MAX_EXPAND_MULTIPLIER];
+    char rtmp[calculate_expand_len(lhs)];
     expand(rhs, rtmp);
 
-    cancel(ltmp, rtmp);
-    compress(ltmp, SPECIAL_CONVERSIONS);
+    char dtmp[calculate_borrow_len(ltmp, rtmp)];
+    strcpy(dtmp, ltmp);
 
-    int final_len = strlen(ltmp);
+    cancel(dtmp, rtmp);
+    compress(dtmp, SPECIAL_CONVERSIONS);
+
+    int final_len = strlen(dtmp);
     if (maxlen < final_len) return;
 
-    strcpy(dst, ltmp);
+    strcpy(dst, dtmp);
 }
