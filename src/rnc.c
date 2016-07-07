@@ -1,35 +1,9 @@
 #include "rnc.h"
+#include "elc.h"
+#include "facts.h"
 #include <string.h>
 #include <strings.h>
 #include <stdbool.h>
-
-static const char ORDER[7] = "MDCLXVI";
-static const int MAX_EXPAND_MULTIPLIER = 3;
-static const int BORROW_MULTIPLIER = 5;
-
-typedef struct {
-    char *little;
-    char *big;
-} conversion_t;
-
-static const int CONVERSION_COUNT = 6;
-static const conversion_t BASIC_CONVERSIONS[] = {
-    { .little = "V", .big = "IIIII" },
-    { .little = "X", .big = "VV" },
-    { .little = "L", .big = "XXXXX" },
-    { .little = "C", .big = "LL" },
-    { .little = "D", .big = "CCCCC" },
-    { .little = "M", .big = "DD" },
-};
-
-static const conversion_t SPECIAL_CONVERSIONS[] = {
-    { .little = "CM", .big = "DCCCC" },
-    { .little = "CD", .big = "CCCC" },
-    { .little = "XC", .big = "LXXXX" },
-    { .little = "XL", .big = "XXXX" },
-    { .little = "IX", .big = "VIIII" },
-    { .little = "IV", .big = "IIII" },
-};
 
 static void combine(char *dst, const char *first, const char *second)
 {
@@ -100,20 +74,6 @@ static void expand(const char *num, char *dst)
     }
 }
 
-int calculate_expand_len(const char *num)
-{
-    int len = strlen(num);
-    for (int i = 0; i < CONVERSION_COUNT; i++)
-    {
-        if (NULL != strstr(num, SPECIAL_CONVERSIONS[i].little)) {
-            len -= 2;
-            len += strlen(SPECIAL_CONVERSIONS[i].big);
-        }
-    }
-
-    return len+1;
-}
-
 void add(const char *first, const char *second, char *dst, int maxlen)
 {
     *dst = 0;
@@ -135,18 +95,6 @@ void add(const char *first, const char *second, char *dst, int maxlen)
     strncpy(dst, tmp, final_len);
 }
 
-static const char *find_digit_to_break_up(const char *num, const char needed)
-{
-    int i = strlen(num) - 1;
-    char *idx = index(ORDER, needed);
-
-    while(i >= 0 && index(ORDER, *(num+i)) > idx) {
-        i--;
-    }
-
-    return num + i;
-}
-
 static const conversion_t* find_basic_conversion(const char *little)
 {
     for (int i = 0; i < CONVERSION_COUNT; i++) {
@@ -160,7 +108,7 @@ static const conversion_t* find_basic_conversion(const char *little)
 
 static bool break_up(char *num, const char needed)
 {
-    const char *break_point = find_digit_to_break_up(num, needed);
+    const char *break_point = lowest_bigger_digit(num, needed);
     const conversion_t *c = find_basic_conversion(break_point);
     if (NULL == c) return false;
 
@@ -191,47 +139,6 @@ void cancel(char *lhs, char *rhs)
             return;
         }
     }
-}
-
-int calculate_borrow_len(const char *lhs, const char *rhs)
-{
-    int len = strlen(lhs);
-    int j = 0;
-
-    for (int i = 0; i < strlen(rhs); i++)
-    {
-        char digit_to_find[2] = { rhs[i], 0 };
-        if (NULL != strstr(lhs+j, digit_to_find)) {
-            j++;
-            continue;
-        }
-        while (rhs[i] == digit_to_find[0]) i++;
-        char lowest_bigger_digit[2] = { 0, 0 };
-        lowest_bigger_digit[0] = *find_digit_to_break_up(lhs+j, digit_to_find[0]);
-
-        conversion_t c = { .little = "", .big = "" };
-        int k;
-        for (k = 0; k < CONVERSION_COUNT; k++) {
-            if (0 == strncmp(digit_to_find, BASIC_CONVERSIONS[k].big, 1)) {
-                c = BASIC_CONVERSIONS[k];
-                break;
-            }
-        }
-
-        if (c.little[0] == lowest_bigger_digit[0]) {
-            len += strlen(c.big) - 1;
-        }
-
-        while (c.little[0] != lowest_bigger_digit[0] && k < CONVERSION_COUNT)
-        {
-            c = BASIC_CONVERSIONS[k++];
-            len += strlen(c.big) - 1;
-        }
-
-        if (c.little[0] != lowest_bigger_digit[0]) return 0;
-    }
-
-    return len+1;
 }
 
 void subtract(const char* lhs, const char* rhs, char *dst, int maxlen)
