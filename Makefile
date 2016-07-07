@@ -1,5 +1,6 @@
-run-tests: tests
-	./tests
+run-tests: rnc-tests elc-tests
+	./rnc-tests
+	./elc-tests
 
 rnc: src/rnc.c src/rnc.h src/facts.h src/elc.h src/elc.c
 	gcc -Wall -c -std=c99 src/elc.c -o elc.o
@@ -9,10 +10,16 @@ rnc: src/rnc.c src/rnc.h src/facts.h src/elc.h src/elc.c
 test_rnc: test/test_rnc.c src/rnc.h
 	gcc -c -std=c99 test/test_rnc.c
 
-tests: test_rnc rnc
-	gcc -o tests test_rnc.o -lcheck -pthread -lcheck_pic -lrt -lm -L. -lrnc
+test_elc: test/test_elc.c src/elc.h
+	gcc -c -std=c99 test/test_elc.c
+
+rnc-tests: test_rnc rnc
+	gcc -o rnc-tests test_rnc.o -lcheck -pthread -lcheck_pic -lrt -lm -L. -lrnc
+
+elc-tests: test_elc rnc
+	gcc -o elc-tests test_elc.o -lcheck -pthread -lcheck_pic -lrt -lm -L. -lrnc
 
 clean:
 	rm -f *.o
 	rm -f *.a
-	rm -f tests
+	rm -f *-tests
