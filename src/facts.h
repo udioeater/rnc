@@ -2,8 +2,6 @@
 #define _FACTS_H_
 
 static const char ORDER[7] = "MDCLXVI";
-static const int MAX_EXPAND_MULTIPLIER = 3;
-static const int BORROW_MULTIPLIER = 5;
 
 typedef struct {
     char *little;
